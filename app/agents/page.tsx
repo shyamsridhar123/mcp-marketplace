@@ -5,8 +5,6 @@ import Link from "next/link"
 import {
   Search,
   Plus,
-  Bell,
-  HelpCircle,
   MoreHorizontal,
   Cpu,
   Activity,
@@ -16,6 +14,9 @@ import {
   TrendingUp,
   Boxes,
   ChevronRight,
+  Zap,
+  ArrowUpRight,
+  ArrowDownRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,32 +28,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { AppShell } from "@/components/app-shell"
+import { GlossaryTooltip } from "@/components/glossary-tooltip"
 import { agentData } from "@/lib/data"
-
-const navItems = [
-  { href: "/", label: "Integrations" },
-  { href: "/agents", label: "Agents" },
-  { href: "/skills", label: "Skills" },
-  { href: "/governance", label: "Governance" },
-  { href: "/analytics", label: "Analytics" },
-  { href: "/settings", label: "Settings" },
-]
+import { cn } from "@/lib/utils"
 
 const statusConfig = {
   active: {
     icon: CheckCircle2,
     label: "Active",
     badgeClass: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    pulseClass: "bg-emerald-500",
   },
   training: {
     icon: Clock,
     label: "Training",
     badgeClass: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+    pulseClass: "bg-amber-500",
   },
   inactive: {
     icon: AlertCircle,
     label: "Inactive",
     badgeClass: "bg-muted text-muted-foreground border-border",
+    pulseClass: "bg-gray-500",
   },
 }
 
@@ -74,53 +71,20 @@ export default function AgentsPage() {
 
   return (
     <AppShell>
-      {/* Header Navigation */}
-      <header className="sticky top-12 z-40 border-b border-border bg-background">
-        <div className="flex h-12 items-center justify-between px-6">
-          <nav className="flex items-center">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`relative px-3 py-3.5 text-sm font-medium transition-colors ${
-                  item.href === "/agents"
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {item.label}
-                {item.href === "/agents" && (
-                  <div className="absolute bottom-0 left-3 right-3 h-0.5 bg-foreground" />
-                )}
-              </Link>
-            ))}
-          </nav>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="h-8 gap-2 text-xs bg-transparent">
-              Feedback
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <HelpCircle className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Bell className="h-4 w-4" />
-            </Button>
-            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-600" />
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <div className="flex-1">
-        <div className="mx-auto max-w-7xl px-6 py-10">
+        <div className="mx-auto max-w-7xl px-6 py-8">
           {/* Page Header */}
-          <div className="mb-8 flex items-start justify-between">
+          <div className="mb-6 flex items-start justify-between">
             <div>
               <h1 className="text-3xl font-semibold tracking-tight text-foreground">
                 Agents
               </h1>
               <p className="mt-1 text-muted-foreground">
-                Deploy and manage AI agents with custom skills
+                <GlossaryTooltip term="agent">
+                  Deploy and manage AI agents
+                </GlossaryTooltip>{" "}
+                with custom skills
               </p>
             </div>
             <Button className="gap-2 bg-foreground text-background hover:bg-foreground/90">
@@ -130,24 +94,44 @@ export default function AgentsPage() {
           </div>
 
           {/* Divider */}
-          <div className="mb-8 h-px bg-border" />
+          <div className="mb-6 h-px bg-border" />
 
-          {/* Stats Row */}
+          {/* Stats Row with Live Indicators */}
           <div className="mb-8 grid grid-cols-4 gap-4">
-            <div className="rounded-xl border border-border bg-card p-4">
+            <div className="rounded-xl border border-border bg-card p-4 relative overflow-hidden">
+              <div className="absolute -right-2 -top-2 h-16 w-16 rounded-full bg-accent/5" />
               <p className="text-sm text-muted-foreground">Total Agents</p>
               <p className="mt-1 text-2xl font-semibold text-foreground">{agentData.length}</p>
             </div>
-            <div className="rounded-xl border border-border bg-card p-4">
+            <div className="rounded-xl border border-border bg-card p-4 relative overflow-hidden">
+              <div className="absolute right-3 top-3 flex items-center gap-1 text-xs text-emerald-400">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                Live
+              </div>
               <p className="text-sm text-muted-foreground">Active</p>
               <p className="mt-1 text-2xl font-semibold text-emerald-400">{activeCount}</p>
             </div>
             <div className="rounded-xl border border-border bg-card p-4">
-              <p className="text-sm text-muted-foreground">Requests Handled</p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">Requests Handled</p>
+                <span className="flex items-center text-xs text-emerald-400">
+                  <ArrowUpRight className="h-3 w-3" />
+                  12%
+                </span>
+              </div>
               <p className="mt-1 text-2xl font-semibold text-foreground">{totalRequests.toLocaleString()}</p>
             </div>
             <div className="rounded-xl border border-border bg-card p-4">
-              <p className="text-sm text-muted-foreground">Avg Success Rate</p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">Avg Success Rate</p>
+                <span className="flex items-center text-xs text-emerald-400">
+                  <ArrowUpRight className="h-3 w-3" />
+                  3%
+                </span>
+              </div>
               <p className="mt-1 text-2xl font-semibold text-foreground">{avgSuccessRate.toFixed(1)}%</p>
             </div>
           </div>
@@ -195,15 +179,19 @@ export default function AgentsPage() {
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent/20">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent/20 relative">
                         <Cpu className="h-5 w-5 text-accent" />
+                        {/* Live status pulse */}
+                        {agent.status === "active" && (
+                          <span className="absolute -right-0.5 -top-0.5 flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-card"></span>
+                          </span>
+                        )}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
                           <h3 className="font-medium text-foreground">{agent.name}</h3>
-                          {agent.status === "active" && (
-                            <span className="flex h-2 w-2 rounded-full bg-emerald-500" />
-                          )}
                         </div>
                         <p className="text-sm text-muted-foreground">{agent.department}</p>
                       </div>

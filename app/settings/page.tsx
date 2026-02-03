@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import {
   User,
   Building,
@@ -10,7 +9,6 @@ import {
   Globe,
   Palette,
   Save,
-  HelpCircle,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -18,63 +16,14 @@ import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { AppShell } from "@/components/app-shell"
 
-const navItems = [
-  { href: "/", label: "Integrations" },
-  { href: "/agents", label: "Agents" },
-  { href: "/skills", label: "Skills" },
-  { href: "/governance", label: "Governance" },
-  { href: "/analytics", label: "Analytics" },
-  { href: "/settings", label: "Settings" },
-]
-
 export default function SettingsPage() {
   return (
     <AppShell>
-      {/* Header Navigation */}
-      <header className="sticky top-12 z-40 border-b border-border bg-background">
-        <div className="flex h-12 items-center justify-between px-6">
-          <nav className="flex items-center">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`relative px-3 py-3.5 text-sm font-medium transition-colors ${
-                  item.href === "/settings"
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {item.label}
-                {item.href === "/settings" && (
-                  <div className="absolute bottom-0 left-3 right-3 h-0.5 bg-foreground" />
-                )}
-              </Link>
-            ))}
-          </nav>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 gap-2 text-xs bg-transparent"
-            >
-              Feedback
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <HelpCircle className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Bell className="h-4 w-4" />
-            </Button>
-            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-600" />
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <div className="flex-1">
-        <div className="mx-auto max-w-3xl px-6 py-10">
+        <div className="mx-auto max-w-3xl px-6 py-8">
           {/* Page Header */}
-          <div className="mb-8">
+          <div className="mb-6">
             <h1 className="text-3xl font-semibold tracking-tight text-foreground">
               Settings
             </h1>
@@ -84,7 +33,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Divider */}
-          <div className="mb-8 h-px bg-border" />
+          <div className="mb-6 h-px bg-border" />
 
           <div className="space-y-6">
             {/* Profile Section */}

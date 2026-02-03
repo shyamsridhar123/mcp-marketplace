@@ -7,44 +7,37 @@ import {
   Grid3X3,
   List,
   Plus,
-  Bell,
-  HelpCircle,
   ExternalLink,
+  Sparkles,
+  TrendingUp,
+  Star,
+  Download,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { AppShell } from "@/components/app-shell"
-import { mcpServers } from "@/lib/data"
+import { OnboardingWizard } from "@/components/onboarding-wizard"
+import { GlossaryTooltip, InlineHelp } from "@/components/glossary-tooltip"
+import { mcpServers, agentData, governancePolicies } from "@/lib/data"
 
 const categories = [
-  { id: "all", label: "All Categories" },
-  { id: "ai", label: "AI" },
-  { id: "analytics", label: "Analytics" },
-  { id: "authentication", label: "Authentication" },
-  { id: "cms", label: "CMS" },
-  { id: "database", label: "Database" },
-  { id: "devtools", label: "DevTools" },
-  { id: "logging", label: "Logging" },
-  { id: "monitoring", label: "Monitoring" },
-  { id: "observability", label: "Observability" },
-  { id: "security", label: "Security" },
-  { id: "storage", label: "Storage" },
-]
-
-const navItems = [
-  { href: "/", label: "Integrations" },
-  { href: "/agents", label: "Agents" },
-  { href: "/skills", label: "Skills" },
-  { href: "/governance", label: "Governance" },
-  { href: "/analytics", label: "Analytics" },
-  { href: "/settings", label: "Settings" },
+  { id: "all", label: "All Categories", count: mcpServers.length },
+  { id: "ai", label: "AI", count: mcpServers.filter(s => s.category === "AI/ML").length },
+  { id: "analytics", label: "Analytics", count: mcpServers.filter(s => s.category === "Analytics").length },
+  { id: "database", label: "Database", count: mcpServers.filter(s => s.category === "Database").length },
+  { id: "devtools", label: "DevTools", count: mcpServers.filter(s => s.category === "DevTools").length },
+  { id: "logging", label: "Logging", count: mcpServers.filter(s => s.category === "Logging").length },
+  { id: "infrastructure", label: "Infrastructure", count: mcpServers.filter(s => s.category === "Infrastructure").length },
+  { id: "security", label: "Security", count: mcpServers.filter(s => s.category === "Security").length },
+  { id: "communication", label: "Communication", count: mcpServers.filter(s => s.category === "Communication").length },
 ]
 
 export default function MarketplacePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [viewMode, setViewMode] = useState<"grid" | "list">("list")
+  const [showOnboarding, setShowOnboarding] = useState(true)
 
   const filteredServers = mcpServers.filter((server) => {
     const matchesSearch =
@@ -56,57 +49,51 @@ export default function MarketplacePage() {
     return matchesSearch && matchesCategory
   })
 
-  const installedCount = mcpServers.filter((s) => s.status === "active").length
+  const installedCount = mcpServers.filter((s) => s.isInstalled).length
+  const activeAgentCount = agentData.filter((a) => a.status === "active").length
+  const skillCount = agentData.reduce((acc, a) => acc + (a.skills?.length || 0), 0)
+  const policyCount = governancePolicies.filter((p) => p.status === "active").length
+
+  // Calculate trending/popular MCPs
+  const trendingMcps = [...mcpServers]
+    .sort((a, b) => b.downloads - a.downloads)
+    .slice(0, 3)
 
   return (
     <AppShell>
-      {/* Header Navigation */}
-      <header className="sticky top-12 z-40 border-b border-border bg-background">
-        <div className="flex h-12 items-center justify-between px-6">
-          <nav className="flex items-center">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`relative px-3 py-3.5 text-sm font-medium transition-colors ${
-                  item.href === "/"
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {item.label}
-                {item.href === "/" && (
-                  <div className="absolute bottom-0 left-3 right-3 h-0.5 bg-foreground" />
-                )}
-              </Link>
-            ))}
-          </nav>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="h-8 gap-2 text-xs bg-transparent">
-              Feedback
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <HelpCircle className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Bell className="h-4 w-4" />
-            </Button>
-            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-600" />
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <div className="flex-1">
-        <div className="mx-auto max-w-7xl px-6 py-10">
+        <div className="mx-auto max-w-7xl px-6 py-8">
+          {/* Onboarding Wizard */}
+          {showOnboarding && (
+            <div className="mb-8">
+              <OnboardingWizard
+                installedMcpCount={installedCount}
+                activeAgentCount={activeAgentCount}
+                skillCount={skillCount}
+                policyCount={policyCount}
+                onDismiss={() => setShowOnboarding(false)}
+              />
+            </div>
+          )}
+
           {/* Page Header */}
-          <div className="mb-8 flex items-start justify-between">
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-              Marketplace
-            </h1>
+          <div className="mb-6 flex items-start justify-between">
+            <div>
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+                Marketplace
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                <GlossaryTooltip term="integration">
+                  Discover integrations
+                </GlossaryTooltip>{" "}
+                to power your AI agents
+              </p>
+            </div>
             <div className="flex items-center gap-3">
               <Button variant="secondary" className="gap-2">
-                Installed Integrations
+                <Download className="h-4 w-4" />
+                Installed
                 <Badge
                   variant="outline"
                   className="ml-1 border-border bg-background"
@@ -114,33 +101,77 @@ export default function MarketplacePage() {
                   {installedCount}
                 </Badge>
               </Button>
-              <Button variant="secondary">Integrations Console</Button>
+              <Button variant="outline" className="gap-2">
+                <Plus className="h-4 w-4" />
+                Become a Provider
+              </Button>
             </div>
           </div>
 
           {/* Divider */}
-          <div className="mb-8 h-px bg-border" />
+          <div className="mb-6 h-px bg-border" />
+
+          {/* Trending Section - New ambient awareness pattern */}
+          <section className="mb-8">
+            <div className="mb-3 flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-accent" />
+              <h2 className="text-sm font-medium text-foreground">Trending Now</h2>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              {trendingMcps.map((mcp, index) => (
+                <Link
+                  key={mcp.id}
+                  href={`/mcp/${mcp.id}`}
+                  className="group flex items-center gap-3 rounded-lg border border-border bg-card p-3 transition-all hover:border-accent/50 hover:shadow-md"
+                >
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-accent/20 text-sm font-bold text-accent">
+                    #{index + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">{mcp.name}</p>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
+                      <span>{mcp.rating}</span>
+                      <span>·</span>
+                      <span>{mcp.downloads.toLocaleString()} installs</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
 
           {/* Layout with Sidebar */}
           <div className="flex gap-10">
             {/* Category Sidebar */}
-            <aside className="w-48 shrink-0">
-              <nav className="space-y-0.5">
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    type="button"
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                      selectedCategory === category.id
-                        ? "bg-secondary text-foreground"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {category.label}
-                  </button>
-                ))}
-              </nav>
+            <aside className="w-52 shrink-0">
+              <div className="sticky top-28">
+                <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Categories
+                </h3>
+                <nav className="space-y-0.5">
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      type="button"
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                        selectedCategory === category.id
+                          ? "bg-accent/15 text-accent"
+                          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      }`}
+                    >
+                      <span>{category.label}</span>
+                      <span className="text-xs opacity-60">{category.count}</span>
+                    </button>
+                  ))}
+                </nav>
+
+                {/* Quick Help */}
+                <div className="mt-6">
+                  <InlineHelp topic="integration" />
+                </div>
+              </div>
             </aside>
 
             {/* Main Content Area */}

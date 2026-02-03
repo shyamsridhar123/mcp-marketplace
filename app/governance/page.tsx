@@ -17,8 +17,12 @@ import {
   Settings,
   Server,
   Plus,
-  Bell,
-  HelpCircle,
+  X,
+  CheckCircle2,
+  XCircle,
+  ChevronDown,
+  ChevronUp,
+  ArrowRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -31,17 +35,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { AppShell } from "@/components/app-shell"
+import { GlossaryTooltip } from "@/components/glossary-tooltip"
 import { governancePolicies, mcpServers } from "@/lib/data"
 import { cn } from "@/lib/utils"
-
-const navItems = [
-  { href: "/", label: "Integrations" },
-  { href: "/agents", label: "Agents" },
-  { href: "/skills", label: "Skills" },
-  { href: "/governance", label: "Governance" },
-  { href: "/analytics", label: "Analytics" },
-  { href: "/settings", label: "Settings" },
-]
 
 const ruleTypeColors: Record<string, string> = {
   "data-access": "bg-blue-500/20 text-blue-400",
@@ -67,8 +63,16 @@ const complianceMetrics = {
   pendingReviews: pendingApprovals.length,
 }
 
+// Approval workflow stages
+const approvalStages = [
+  { id: "pending", label: "Pending Review", count: pendingApprovals.length },
+  { id: "in-review", label: "In Review", count: 0 },
+  { id: "approved", label: "Approved", count: mcpServers.filter(m => m.status === "approved").length },
+]
+
 export default function GovernancePage() {
   const [searchQuery, setSearchQuery] = useState("")
+  const [expandedPolicy, setExpandedPolicy] = useState<string | null>(null)
 
   const filteredPolicies = governancePolicies.filter(
     (policy) =>
@@ -78,57 +82,19 @@ export default function GovernancePage() {
 
   return (
     <AppShell>
-      {/* Header Navigation */}
-      <header className="sticky top-12 z-40 border-b border-border bg-background">
-        <div className="flex h-12 items-center justify-between px-6">
-          <nav className="flex items-center">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`relative px-3 py-3.5 text-sm font-medium transition-colors ${
-                  item.href === "/governance"
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {item.label}
-                {item.href === "/governance" && (
-                  <div className="absolute bottom-0 left-3 right-3 h-0.5 bg-foreground" />
-                )}
-              </Link>
-            ))}
-          </nav>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 gap-2 text-xs bg-transparent"
-            >
-              Feedback
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <HelpCircle className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Bell className="h-4 w-4" />
-            </Button>
-            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-600" />
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <div className="flex-1">
-        <div className="mx-auto max-w-7xl px-6 py-10">
+        <div className="mx-auto max-w-7xl px-6 py-8">
           {/* Page Header */}
-          <div className="mb-8 flex items-start justify-between">
+          <div className="mb-6 flex items-start justify-between">
             <div>
               <h1 className="text-3xl font-semibold tracking-tight text-foreground">
                 Governance
               </h1>
               <p className="mt-1 text-muted-foreground">
-                Manage policies, compliance, and MCP approvals
+                <GlossaryTooltip term="policy">
+                  Manage policies
+                </GlossaryTooltip>, compliance, and MCP approvals
               </p>
             </div>
             <Button className="gap-2 bg-foreground text-background hover:bg-foreground/90">
@@ -138,9 +104,9 @@ export default function GovernancePage() {
           </div>
 
           {/* Divider */}
-          <div className="mb-8 h-px bg-border" />
+          <div className="mb-6 h-px bg-border" />
 
-          {/* Stats */}
+          {/* Stats with contextual indicators */}
           <div className="mb-8 grid grid-cols-4 gap-4">
             <div className="rounded-xl border border-border bg-card p-4">
               <p className="text-sm text-muted-foreground">Total Policies</p>
@@ -149,19 +115,31 @@ export default function GovernancePage() {
               </p>
             </div>
             <div className="rounded-xl border border-border bg-card p-4">
-              <p className="text-sm text-muted-foreground">Active Policies</p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">Active Policies</p>
+                <Shield className="h-4 w-4 text-emerald-400" />
+              </div>
               <p className="mt-1 text-2xl font-semibold text-emerald-400">
                 {complianceMetrics.activePolicies}
               </p>
             </div>
             <div className="rounded-xl border border-border bg-card p-4">
-              <p className="text-sm text-muted-foreground">MCPs Compliant</p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">MCPs Compliant</p>
+                <CheckCircle2 className="h-4 w-4 text-accent" />
+              </div>
               <p className="mt-1 text-2xl font-semibold text-foreground">
                 {complianceMetrics.mcpsCompliant}
               </p>
             </div>
-            <div className="rounded-xl border border-border bg-card p-4">
-              <p className="text-sm text-muted-foreground">Pending Reviews</p>
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-amber-400">Pending Reviews</p>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                </span>
+              </div>
               <p className="mt-1 text-2xl font-semibold text-amber-400">
                 {complianceMetrics.pendingReviews}
               </p>
@@ -302,91 +280,122 @@ export default function GovernancePage() {
             </TabsContent>
 
             <TabsContent value="approvals" className="mt-6">
-              <div className="rounded-xl border border-border bg-card">
-                <div className="border-b border-border p-4">
-                  <h3 className="font-semibold text-foreground">
-                    Pending MCP Approvals
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    MCPs awaiting compliance review and approval
-                  </p>
-                </div>
-
-                {pendingApprovals.length > 0 ? (
-                  <div className="divide-y divide-border">
-                    {pendingApprovals.map((mcp) => (
-                      <div
-                        key={mcp.id}
-                        className="flex items-center justify-between p-4"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary">
-                            <Server className="h-5 w-5 text-muted-foreground" />
+              {/* Kanban-style Approval Workflow */}
+              <div className="grid grid-cols-3 gap-4">
+                {/* Pending Review Column */}
+                <div className="rounded-xl border border-border bg-card">
+                  <div className="border-b border-border p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-amber-500" />
+                        <h3 className="font-semibold text-foreground">Pending Review</h3>
+                      </div>
+                      <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/30">
+                        {pendingApprovals.length}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="p-2 space-y-2 max-h-96 overflow-y-auto">
+                    {pendingApprovals.length > 0 ? (
+                      pendingApprovals.map((mcp) => (
+                        <div
+                          key={mcp.id}
+                          className="rounded-lg border border-border bg-background p-3 hover:border-accent/50 transition-colors cursor-pointer"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-secondary shrink-0">
+                              <Server className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-foreground text-sm truncate">{mcp.name}</p>
+                              <p className="text-xs text-muted-foreground">{mcp.provider}</p>
+                              <div className="mt-2 flex items-center gap-2">
+                                <Badge variant="outline" className={cn(
+                                  "text-[10px]",
+                                  mcp.complianceLevel === "high" ? "border-emerald-500/30 text-emerald-400" :
+                                  mcp.complianceLevel === "medium" ? "border-amber-500/30 text-amber-400" :
+                                  "border-red-500/30 text-red-400"
+                                )}>
+                                  {mcp.complianceLevel} compliance
+                                </Badge>
+                              </div>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-medium text-foreground">
-                              {mcp.name}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {mcp.provider}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <Badge
-                              variant="secondary"
-                              className="bg-amber-500/20 text-amber-400 border-transparent"
-                            >
-                              <Clock className="mr-1 h-3 w-3" />
-                              Pending Review
-                            </Badge>
-                            <p className="mt-1 text-xs text-muted-foreground">
-                              Submitted {mcp.lastUpdated}
-                            </p>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="gap-1 bg-transparent"
-                            >
-                              <Eye className="h-4 w-4" />
+                          <div className="mt-3 flex gap-1">
+                            <Button size="sm" variant="outline" className="flex-1 h-7 text-xs bg-transparent">
+                              <Eye className="h-3 w-3 mr-1" />
                               Review
                             </Button>
-                            <Button
-                              size="sm"
-                              className="gap-1 bg-foreground text-background hover:bg-foreground/90"
-                            >
-                              <Check className="h-4 w-4" />
-                              Approve
+                            <Button size="sm" className="h-7 w-7 p-0 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30">
+                              <Check className="h-3 w-3" />
                             </Button>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              className="gap-1"
-                            >
-                              <AlertTriangle className="h-4 w-4" />
-                              Reject
+                            <Button size="sm" variant="destructive" className="h-7 w-7 p-0">
+                              <X className="h-3 w-3" />
                             </Button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-8 text-center">
+                        <CheckCircle2 className="h-8 w-8 text-emerald-400 mb-2" />
+                        <p className="text-sm text-muted-foreground">No pending reviews</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* In Review Column */}
+                <div className="rounded-xl border border-border bg-card">
+                  <div className="border-b border-border p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-blue-500" />
+                        <h3 className="font-semibold text-foreground">In Review</h3>
+                      </div>
+                      <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/30">
+                        0
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="p-2 space-y-2 max-h-96 overflow-y-auto">
+                    <div className="flex flex-col items-center justify-center py-8 text-center border border-dashed border-border rounded-lg">
+                      <p className="text-sm text-muted-foreground">Drag items here</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Approved Column */}
+                <div className="rounded-xl border border-border bg-card">
+                  <div className="border-b border-border p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                        <h3 className="font-semibold text-foreground">Approved</h3>
+                      </div>
+                      <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
+                        {mcpServers.filter(m => m.status === "approved" || m.isInstalled).length}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="p-2 space-y-2 max-h-96 overflow-y-auto">
+                    {mcpServers.filter(m => m.isInstalled).slice(0, 3).map((mcp) => (
+                      <div
+                        key={mcp.id}
+                        className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-500/20 shrink-0">
+                            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-foreground text-sm truncate">{mcp.name}</p>
+                            <p className="text-xs text-muted-foreground">{mcp.provider}</p>
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/20">
-                      <Check className="h-6 w-6 text-emerald-400" />
-                    </div>
-                    <p className="mt-3 font-medium text-foreground">
-                      All caught up!
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      No pending approvals
-                    </p>
-                  </div>
-                )}
+                </div>
               </div>
             </TabsContent>
 

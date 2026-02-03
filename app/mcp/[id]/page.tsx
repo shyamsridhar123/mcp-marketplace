@@ -14,8 +14,6 @@ import {
   FileText,
   Users,
   Activity,
-  Bell,
-  HelpCircle,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -24,14 +22,12 @@ import { AppShell } from "@/components/app-shell"
 import { mcpServers, agentData } from "@/lib/data"
 import { cn } from "@/lib/utils"
 
-const navItems = [
-  { href: "/", label: "Integrations" },
-  { href: "/agents", label: "Agents" },
-  { href: "/skills", label: "Skills" },
-  { href: "/governance", label: "Governance" },
-  { href: "/analytics", label: "Analytics" },
-  { href: "/settings", label: "Settings" },
-]
+// Generate static params for all MCP pages
+export async function generateStaticParams() {
+  return mcpServers.map((mcp) => ({
+    id: mcp.id,
+  }))
+}
 
 const complianceLevelColors: Record<string, string> = {
   high: "bg-emerald-500/20 text-emerald-400",
@@ -74,45 +70,9 @@ export default async function MCPDetailPage({
 
   return (
     <AppShell>
-      {/* Header Navigation */}
-      <header className="sticky top-12 z-40 border-b border-border bg-background">
-        <div className="flex h-12 items-center justify-between px-6">
-          <nav className="flex items-center">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`relative px-3 py-3.5 text-sm font-medium transition-colors ${
-                  item.href === "/"
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {item.label}
-                {item.href === "/" && (
-                  <div className="absolute bottom-0 left-3 right-3 h-0.5 bg-foreground" />
-                )}
-              </Link>
-            ))}
-          </nav>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="h-8 gap-2 text-xs bg-transparent">
-              Feedback
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <HelpCircle className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Bell className="h-4 w-4" />
-            </Button>
-            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-600" />
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <div className="flex-1">
-        <div className="mx-auto max-w-7xl px-6 py-10">
+        <div className="mx-auto max-w-7xl px-6 py-8">
           {/* Back Link */}
           <Link
             href="/"
