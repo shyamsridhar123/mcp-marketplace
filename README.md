@@ -1,30 +1,63 @@
-# Nebula MCP Marketplace
+# Nexus - MCP Marketplace
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+An enterprise-grade platform for discovering, connecting, and governing Model Context Protocol (MCP) integrations and AI agents.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/shyamsridhar123s-projects/v0-mcp-marketplace)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/nHMylWy9IC2)
+## 🌐 Live Demo
+
+**[https://shyamsridhar123.github.io/mcp-marketplace/](https://shyamsridhar123.github.io/mcp-marketplace/)**
 
 ## Overview
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+Nexus is a comprehensive MCP Marketplace that enables organizations to:
 
-## Deployment
+- **Discover** - Browse and search a catalog of MCP integrations across categories like Logging, Database, DevTools, and more
+- **Connect** - Visually orchestrate connections between MCPs and AI Agents using an interactive canvas
+- **Orchestrate** - Manage AI agents and their skills powered by MCP capabilities  
+- **Govern** - Apply governance policies, compliance rules, and access controls
 
-Your project is live at:
+## Features
 
-**[https://vercel.com/shyamsridhar123s-projects/v0-mcp-marketplace](https://vercel.com/shyamsridhar123s-projects/v0-mcp-marketplace)**
+### 🔌 MCP Integration Catalog
+- Browse integrations by category (Logging, Database, Infrastructure, etc.)
+- View ratings, downloads, compliance levels, and capabilities
+- Install and configure MCPs for your agents
 
-## Build your app
+### 🤖 AI Agent Management
+- Create and manage AI agents across departments
+- Assign skills from connected MCPs
+- Monitor performance metrics and success rates
 
-Continue building your app on:
+### 🎨 Interactive Connection Canvas
+- Drag-and-drop visual interface for connecting MCPs to Agents
+- Real-time connection visualization with animated data flow
+- Minimap for navigation and overview
 
-**[https://v0.app/chat/nHMylWy9IC2](https://v0.app/chat/nHMylWy9IC2)**
+### 🛡️ Governance & Compliance
+- Define and enforce governance policies
+- Data classification and access controls
+- Audit trails and compliance reporting
 
-## How It Works
+## Tech Stack
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+- **Framework**: Next.js 16 (App Router)
+- **Styling**: Tailwind CSS
+- **UI Components**: Radix UI + shadcn/ui
+- **Language**: TypeScript
+- **Deployment**: GitHub Pages (Static Export)
+
+## Getting Started
+
+```bash
+# Install dependencies
+pnpm install
+
+# Run development server
+pnpm dev
+
+# Build for production
+pnpm build
+```
+
+## License
+
+MIT
