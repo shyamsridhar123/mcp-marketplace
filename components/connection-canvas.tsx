@@ -44,7 +44,7 @@ interface NodePosition {
   y: number
 }
 
-type NodeType = "mcp" | "agent" | "skill"
+type NodeType = "mcp" | "agent" | "skill" | "workiq"
 
 interface CanvasNode {
   id: string
@@ -157,9 +157,27 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
   // Generate canvas nodes from data
   const generateNodes = useCallback((): CanvasNode[] => {
     const nodes: CanvasNode[] = []
-    const installedMcps = mcps.filter(m => m.isInstalled)
+    const installedMcps = mcps.filter(m => m.isInstalled && !m.isWorkIQ)
+    const workIQMcps = mcps.filter(m => m.isWorkIQ && m.isInstalled)
 
-    // Position MCPs on the left
+    // Position Work IQ MCPs at the top-left with purple styling
+    workIQMcps.forEach((mcp, index) => {
+      const savedPos = nodePositions[mcp.id]
+      nodes.push({
+        id: mcp.id,
+        type: "workiq",
+        name: mcp.name,
+        status: 'activated',
+        position: savedPos || { x: 100, y: 30 + index * 100 },
+        connections: agents
+          .filter(a => a.mcpConnections?.includes(mcp.id))
+          .map(a => a.id),
+        data: mcp,
+      })
+    })
+
+    // Position MCPs on the left (below Work IQ nodes)
+    const mcpYOffset = workIQMcps.length * 100 + 50
     installedMcps.forEach((mcp, index) => {
       const savedPos = nodePositions[mcp.id]
       // Include pending connections from agents to this MCP
@@ -172,7 +190,7 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
         type: "mcp",
         name: mcp.name,
         status: mcp.status,
-        position: savedPos || { x: 100, y: 100 + index * 160 },
+        position: savedPos || { x: 100, y: mcpYOffset + index * 160 },
         connections: [
           ...agents
             .filter(a => a.mcpConnections?.includes(mcp.id))
@@ -416,8 +434,8 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
         if (renderedConnections.has(connectionKey)) return
         renderedConnections.add(connectionKey)
 
-        // Determine which is MCP and which is Agent for consistent rendering
-        const mcpNode = node.type === "mcp" ? node : targetNode
+        // Determine which is MCP/WorkIQ and which is Agent for consistent rendering
+        const mcpNode = (node.type === "mcp" || node.type === "workiq") ? node : targetNode
         const agentNode = node.type === "agent" ? node : targetNode
         
         const mcpPos = nodePositions[mcpNode.id] || mcpNode.position
@@ -606,7 +624,7 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
                 width={20}
                 height={12}
                 rx={2}
-                fill={node.type === "mcp" ? "#a855f7" : "#22c55e"}
+                fill={node.type === "workiq" ? "#7c3aed" : node.type === "mcp" ? "#a855f7" : "#22c55e"}
                 opacity={isSelected ? 1 : 0.7}
                 stroke={isSelected ? "#fff" : "none"}
                 strokeWidth={1}
@@ -814,9 +832,10 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
                 key={node.id}
                 className={cn(
                   "absolute w-[220px] rounded-xl border bg-card shadow-sm transition-all duration-200",
+                  node.type === "workiq" && "bg-gradient-to-br from-violet-500/10 to-background border-violet-500/30",
                   isSelected
                     ? "border-accent ring-2 ring-accent/20 shadow-lg shadow-accent/10"
-                    : "border-border",
+                    : node.type === "workiq" ? "border-violet-500/30" : "border-border",
                   isHovered && !isSelected && "border-accent/50 shadow-md",
                   isDragging && "shadow-xl scale-105 z-50",
                   isValidDropTarget && "ring-2 ring-accent ring-offset-2 ring-offset-background border-accent"
@@ -850,8 +869,8 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
                   <GripVertical className="h-4 w-4 text-muted-foreground/50" />
                 </div>
 
-                {/* Connection Port - Right side for MCPs */}
-                {node.type === "mcp" && (
+                {/* Connection Port - Right side for MCPs and WorkIQ */}
+                {(node.type === "mcp" || node.type === "workiq") && (
                   <div 
                     className={cn(
                       "absolute -right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full border-2 bg-card flex items-center justify-center transition-all z-10",
@@ -907,9 +926,11 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
                       <div
                         className={cn(
                           "h-3 w-3 rounded-full",
-                          node.type === "mcp"
-                            ? getCategoryColor((node.data as MCP).category)
-                            : getStatusColor(node.status || "inactive")
+                          node.type === "workiq"
+                            ? "bg-violet-500"
+                            : node.type === "mcp"
+                              ? getCategoryColor((node.data as MCP).category)
+                              : getStatusColor(node.status || "inactive")
                         )}
                       />
                       <Badge
@@ -953,7 +974,7 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
 
                   {/* Node Meta */}
                   <p className="mb-3 text-xs text-muted-foreground truncate">
-                    {node.type === "mcp"
+                    {(node.type === "mcp" || node.type === "workiq")
                       ? (node.data as MCP).provider
                       : (node.data as Agent).department}
                   </p>
@@ -979,7 +1000,7 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
                       {node.connections.length} connection{node.connections.length !== 1 ? "s" : ""}
                     </span>
                     <Link
-                      href={node.type === "mcp" ? `/mcp/${node.id}` : `/agents/${node.id}`}
+                      href={(node.type === "mcp" || node.type === "workiq") ? `/mcp/${node.id}` : `/agents/${node.id}`}
                       className="text-accent hover:underline flex items-center gap-1"
                       onClick={(e) => e.stopPropagation()}
                     >
