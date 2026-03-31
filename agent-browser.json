@@ -1,0 +1,6 @@
+{
+  "contentBoundaries": true,
+  "maxOutput": 40000,
+  "screenshotDir": "./.agent-browser/screenshots",
+  "downloadPath": "./.agent-browser/downloads"
+}

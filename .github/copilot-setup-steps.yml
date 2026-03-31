@@ -1,0 +1,5 @@
+steps:
+  - name: "Install dependencies"
+    run: "corepack pnpm install --frozen-lockfile"
+  - name: "Build project"
+    run: "corepack pnpm build"
