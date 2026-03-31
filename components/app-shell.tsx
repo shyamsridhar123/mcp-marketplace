@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button"
 import {
   Bell,
   HelpCircle,
-  Compass,
-  Link2,
-  Cpu,
-  Shield,
-  BarChart3,
-  Settings,
+  Store,
+  Bot,
   Sparkles,
+  Workflow,
+  Shield,
+  Brain,
+  Settings,
   Activity,
 } from "lucide-react"
 import { useState, useEffect } from "react"
@@ -23,41 +23,52 @@ interface AppShellProps {
   children: ReactNode
 }
 
-// Task-oriented navigation following user journey: Discover → Connect → Orchestrate → Govern
+// 6-pillar navigation: Marketplace → Agents → Skills → Orchestration → Governance → Intelligence
 const navGroups = [
   {
-    id: "discover",
-    label: "Discover",
-    icon: Compass,
-    description: "Find integrations",
-    items: [{ href: "/", label: "Marketplace", icon: Sparkles }],
+    id: "marketplace",
+    label: "Marketplace",
+    icon: Store,
+    description: "Discover MCPs & Work IQ",
+    items: [{ href: "/", label: "MCP Catalog", icon: Sparkles }],
   },
   {
-    id: "connect",
-    label: "Connect",
-    icon: Link2,
-    description: "Link your tools",
+    id: "agents",
+    label: "Agents",
+    icon: Bot,
+    description: "Agent lifecycle",
+    items: [{ href: "/agents", label: "Agent Registry" }],
+  },
+  {
+    id: "skills",
+    label: "Skills",
+    icon: Sparkles,
+    description: "Capability packages",
+    items: [{ href: "/skills", label: "Skill Library" }],
+  },
+  {
+    id: "orchestration",
+    label: "Orchestration",
+    icon: Workflow,
+    description: "Visual composition",
     items: [
       { href: "/canvas", label: "Connection Canvas", icon: Activity },
     ],
   },
   {
-    id: "orchestrate",
-    label: "Orchestrate",
-    icon: Cpu,
-    description: "Build & deploy",
-    items: [
-      { href: "/agents", label: "Agents" },
-      { href: "/skills", label: "Skills" },
-    ],
+    id: "governance",
+    label: "Governance",
+    icon: Shield,
+    description: "Policies & compliance",
+    items: [{ href: "/governance", label: "Policies & Compliance" }],
   },
   {
-    id: "govern",
-    label: "Govern",
-    icon: Shield,
-    description: "Control & monitor",
+    id: "intelligence",
+    label: "Intelligence",
+    icon: Brain,
+    description: "Work IQ & analytics",
     items: [
-      { href: "/governance", label: "Policies" },
+      { href: "/intelligence", label: "Work IQ Dashboard" },
       { href: "/analytics", label: "Analytics" },
     ],
   },
@@ -65,12 +76,13 @@ const navGroups = [
 
 const settingsItem = { href: "/settings", label: "Settings", icon: Settings }
 
-// Activity feed for ambient awareness
+// Activity feed with Agent 365 activities
 const recentActivity = [
-  { id: 1, type: "install", message: "GitHub MCP installed", time: "2m ago", status: "success" },
-  { id: 2, type: "agent", message: "Support Agent activated", time: "15m ago", status: "success" },
-  { id: 3, type: "policy", message: "Data Access policy updated", time: "1h ago", status: "info" },
-  { id: 4, type: "alert", message: "Rate limit warning on Slack MCP", time: "2h ago", status: "warning" },
+  { id: 1, type: "install", message: "Work IQ Mail MCP activated", time: "2m ago", status: "success" },
+  { id: 2, type: "agent", message: "Knowledge Worker Agent deployed", time: "15m ago", status: "success" },
+  { id: 3, type: "policy", message: "HR Onboarding Blueprint submitted for review", time: "1h ago", status: "info" },
+  { id: 4, type: "alert", message: "Compliance Sentinel detected policy violation", time: "2h ago", status: "warning" },
+  { id: 5, type: "agent", message: "DevOps Agent MCP access request pending", time: "3h ago", status: "info" },
 ]
 
 export function AppShell({ children }: AppShellProps) {
@@ -78,12 +90,14 @@ export function AppShell({ children }: AppShellProps) {
   const [showActivityFeed, setShowActivityFeed] = useState(false)
   const [unreadCount, setUnreadCount] = useState(3)
 
-  // Determine active nav group
+  // Determine active nav group for 6-pillar nav
   const getActiveGroup = () => {
-    if (pathname === "/" || pathname.startsWith("/mcp")) return "discover"
-    if (pathname === "/canvas") return "connect"
-    if (pathname.startsWith("/agents") || pathname.startsWith("/skills")) return "orchestrate"
-    if (pathname.startsWith("/governance") || pathname.startsWith("/analytics")) return "govern"
+    if (pathname === "/" || pathname.startsWith("/mcp")) return "marketplace"
+    if (pathname.startsWith("/agents")) return "agents"
+    if (pathname.startsWith("/skills")) return "skills"
+    if (pathname === "/canvas") return "orchestration"
+    if (pathname.startsWith("/governance")) return "governance"
+    if (pathname.startsWith("/intelligence") || pathname.startsWith("/analytics")) return "intelligence"
     return null
   }
 
