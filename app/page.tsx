@@ -33,6 +33,7 @@ const categories = [
   { id: "all", label: "All Categories", count: mcpServers.length },
   { id: "ai", label: "AI", count: mcpServers.filter(s => s.category === "AI/ML").length },
   { id: "analytics", label: "Analytics", count: mcpServers.filter(s => s.category === "Analytics").length },
+  { id: "crm", label: "CRM", count: mcpServers.filter(s => s.category === "CRM").length },
   { id: "database", label: "Database", count: mcpServers.filter(s => s.category === "Database").length },
   { id: "devtools", label: "DevTools", count: mcpServers.filter(s => s.category === "DevTools").length },
   { id: "logging", label: "Logging", count: mcpServers.filter(s => s.category === "Logging").length },

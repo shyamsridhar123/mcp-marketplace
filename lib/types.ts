@@ -76,6 +76,7 @@ export type MCPCategory =
   | 'Compliance'
   | 'Analytics'
   | 'Communication'
+  | 'CRM'
   | 'Database'
   | 'Security'
   | 'DevOps'

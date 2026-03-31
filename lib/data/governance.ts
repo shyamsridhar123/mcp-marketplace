@@ -59,6 +59,21 @@ export const agentBlueprints: AgentBlueprint[] = [
     createdBy: 'HR Operations',
     createdAt: '2026-01-15',
   },
+  {
+    id: 'bp-sales-ops',
+    name: 'Sales Operations Blueprint',
+    description: 'Blueprint for sales agents with CRM pipeline management, revenue forecasting, and Work IQ integration for activity logging',
+    capabilities: ['Pipeline Management', 'Revenue Forecasting', 'Activity Logging', 'CRM Automation'],
+    requiredMCPServers: ['d365-sales-core', 'd365-sales-insights'],
+    securityConstraints: ['CRM record access scoped to user territory/team assignment', 'Deal modifications above $100K require manager approval', 'Customer PII must not be exported to unmanaged channels', 'All CRM write operations logged and auditable'],
+    complianceRequirements: ['SOC 2', 'GDPR', 'Company Sales Policy'],
+    governancePolicies: ['pol-1', 'dlp-crm'],
+    status: 'active',
+    createdBy: 'Sales Operations',
+    createdAt: '2026-02-01',
+    approvedBy: 'VP Sales',
+    approvedAt: '2026-02-10',
+  },
 ]
 
 export const dlpPolicies: DLPPolicy[] = [
@@ -107,6 +122,21 @@ export const dlpPolicies: DLPPolicy[] = [
     createdBy: 'Communications Team',
     createdAt: '2026-01-05',
   },
+  {
+    id: 'dlp-crm',
+    name: 'CRM Customer Data Protection',
+    description: 'Protects customer PII in CRM records, warns on data export to non-approved channels, and requires approval for high-value deal modifications',
+    level: 'agent',
+    rules: [
+      { id: 'dlp-r7', type: 'data-boundary', condition: 'export customer PII (email, phone) to non-CRM channel', action: 'warn_and_log', dataClassifications: ['confidential'] },
+      { id: 'dlp-r8', type: 'sensitivity-label', condition: 'deal value modification > $100K threshold', action: 'require_approval', dataClassifications: ['confidential'] },
+    ],
+    enforcement: 'warn',
+    appliedTo: ['d365-sales-core', 'd365-copilot-sales'],
+    status: 'active',
+    createdBy: 'Sales Operations',
+    createdAt: '2026-02-05',
+  },
 ]
 
 export const agentTraces: AgentTrace[] = [
@@ -122,6 +152,10 @@ export const agentTraces: AgentTrace[] = [
   { id: 'trace-010', agentId: 'compliance-agent', agentName: 'Compliance Agent', traceType: 'tool_execution', toolServerName: 'Better Stack', result: 'success', durationMs: 198, timestamp: '2026-03-31T08:45:18Z', initiatedBy: 'alex.haliburton@contoso.onmicrosoft.com' },
   { id: 'trace-011', agentId: 'data-agent', agentName: 'Data Analytics Agent', traceType: 'inference', result: 'failure', durationMs: 3200, timestamp: '2026-03-31T08:40:02Z', initiatedBy: 'system' },
   { id: 'trace-012', agentId: 'knowledge-worker-agent', agentName: 'Knowledge Worker Agent', traceType: 'tool_execution', toolServerName: 'Work IQ Teams', result: 'success', durationMs: 523, timestamp: '2026-03-31T08:35:55Z', initiatedBy: 'system' },
+  { id: 'trace-013', agentId: 'sales-rep-agent', agentName: 'Sales Rep Agent', traceType: 'tool_execution', toolServerName: 'Dynamics 365 Sales', result: 'success', durationMs: 340, timestamp: '2026-03-31T09:20:15Z', initiatedBy: 'system' },
+  { id: 'trace-014', agentId: 'sales-rep-agent', agentName: 'Sales Rep Agent', traceType: 'tool_execution', toolServerName: 'Work IQ Calendar', result: 'success', durationMs: 280, timestamp: '2026-03-31T09:18:42Z', initiatedBy: 'system' },
+  { id: 'trace-015', agentId: 'sales-manager-agent', agentName: 'Sales Manager Agent', traceType: 'inference', toolServerName: 'Dynamics 365 Sales Insights', result: 'success', durationMs: 890, timestamp: '2026-03-31T09:16:30Z', initiatedBy: 'mike.chen@contoso.onmicrosoft.com' },
+  { id: 'trace-016', agentId: 'lead-gen-agent', agentName: 'Lead Generation Agent', traceType: 'tool_execution', toolServerName: 'Dynamics 365 Copilot for Sales', result: 'success', durationMs: 520, timestamp: '2026-03-31T09:13:55Z', initiatedBy: 'system' },
 ]
 
 export const approvalRequests: ApprovalRequest[] = [
@@ -196,6 +230,34 @@ export const approvalRequests: ApprovalRequest[] = [
     reviewedAt: '2026-03-22T16:00:00Z',
     comments: 'Rejected — Foundry IQ integration requires additional security review. Please resubmit after completing the threat model assessment.',
   },
+  {
+    id: 'apr-006',
+    type: 'mcp-access',
+    title: 'Sales Rep Agent D365 Sales Core Access',
+    description: 'Grant Sales Rep Agent full access to Dynamics 365 Sales Core for lead, contact, and opportunity management',
+    requestorId: 'user-sales-ops',
+    requestorName: 'Mike Chen',
+    approverId: 'user-it-admin',
+    approverName: 'James Wilson',
+    stage: 'approved',
+    entityId: 'd365-sales-core',
+    entityType: 'mcp',
+    submittedAt: '2026-02-08T10:00:00Z',
+    reviewedAt: '2026-02-09T14:00:00Z',
+    comments: 'Approved — territory-scoped access granted per Sales Operations Blueprint requirements.',
+  },
+  {
+    id: 'apr-007',
+    type: 'mcp-access',
+    title: 'Lead Gen Agent Copilot for Sales Access',
+    description: 'Grant Lead Generation Agent access to Dynamics 365 Copilot for Sales for conversation intelligence and contact enrichment',
+    requestorId: 'user-marketing-lead',
+    requestorName: 'Sarah Johnson',
+    stage: 'pending',
+    entityId: 'd365-copilot-sales',
+    entityType: 'mcp',
+    submittedAt: '2026-03-30T15:30:00Z',
+  },
 ]
 
 export const iqSignals: IQSignal[] = [
@@ -211,4 +273,7 @@ export const iqSignals: IQSignal[] = [
   { id: 'iq-010', source: 'work-iq', layer: 'inference', type: 'anomaly', content: 'Model inference latency spike on Compliance Agent: 2300ms avg (normal: 145ms) — investigating', agentId: 'compliance-agent', timestamp: '2026-03-31T08:50:00Z', confidence: 0.95 },
   { id: 'iq-011', source: 'foundry-iq', layer: 'data', type: 'knowledge-update', content: 'Enterprise knowledge base indexed 1,247 new documents from SharePoint this week', timestamp: '2026-03-31T08:00:00Z', confidence: 0.99 },
   { id: 'iq-012', source: 'fabric-iq', layer: 'data', type: 'analytics-signal', content: 'Power BI semantic model refresh completed — 42 datasets updated across 8 workspaces', timestamp: '2026-03-31T07:30:00Z', confidence: 0.97 },
+  { id: 'iq-013', source: 'work-iq', layer: 'data', type: 'pipeline-signal', content: 'Pipeline velocity declining 15% in EMEA region — 12 deals stalled in negotiation stage for 14+ days', agentId: 'sales-manager-agent', timestamp: '2026-03-31T09:25:00Z', confidence: 0.93 },
+  { id: 'iq-014', source: 'work-iq', layer: 'inference', type: 'sales-recommendation', content: 'Recommend scheduling follow-up meetings for 5 high-value opportunities with no activity in 14 days — estimated $2.3M at risk', agentId: 'sales-rep-agent', timestamp: '2026-03-31T09:22:00Z', confidence: 0.88 },
+  { id: 'iq-015', source: 'work-iq', layer: 'memory', type: 'sales-pattern', content: 'Q1 pipeline typically closes 23% higher than Q4 — historical pattern from 3-year analysis across 1,400 deals', agentId: 'sales-manager-agent', timestamp: '2026-03-31T08:15:00Z', confidence: 0.91 },
 ]
