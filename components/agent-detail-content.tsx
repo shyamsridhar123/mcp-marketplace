@@ -20,22 +20,28 @@ import {
   Clock,
   Check,
   X,
+  Brain,
+  UserPlus,
+  ShieldCheck,
 } from "lucide-react"
 import { AppShell } from "@/components/app-shell"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Switch } from "@/components/ui/switch"
-import { mcpServers } from "@/lib/data"
+import { mcpServers, agentBlueprints, agentTraces } from "@/lib/data"
 import { cn } from "@/lib/utils"
 import type { Agent } from "@/lib/types"
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   server: Server,
   shield: Shield,
+  "shield-check": ShieldCheck,
   "git-branch": GitBranch,
   headphones: Headphones,
   "bar-chart": BarChart,
+  brain: Brain,
+  "user-plus": UserPlus,
 }
 
 const statusColors = {
@@ -144,11 +150,18 @@ export function AgentDetailContent({ agent }: { agent: Agent }) {
                   </TabsTrigger>
                   <TabsTrigger value="mcps" className="gap-2">
                     <Server className="h-4 w-4" />
-                    Connected Integrations
+                    Integrations
                   </TabsTrigger>
-                  <TabsTrigger value="activity" className="gap-2">
+                  <TabsTrigger value="blueprint" className="gap-2">
+                    <Shield className="h-4 w-4" />
+                    Blueprint
+                  </TabsTrigger>
+                  <TabsTrigger value="identity" className="gap-2">
+                    🛡️ Identity
+                  </TabsTrigger>
+                  <TabsTrigger value="observability" className="gap-2">
                     <Activity className="h-4 w-4" />
-                    Activity
+                    Observability
                   </TabsTrigger>
                 </TabsList>
 
@@ -350,6 +363,167 @@ export function AgentDetailContent({ agent }: { agent: Agent }) {
                         </div>
                       ))}
                     </div>
+                  </div>
+                </TabsContent>
+
+                {/* Blueprint Tab */}
+                <TabsContent value="blueprint" className="mt-6">
+                  <div className="rounded-xl border border-border bg-card p-6">
+                    {agent.blueprintId ? (() => {
+                      const bp = agentBlueprints.find(b => b.id === agent.blueprintId)
+                      if (!bp) return <p className="text-muted-foreground">Blueprint not found</p>
+                      return (
+                        <div>
+                          <div className="flex items-center justify-between mb-4">
+                            <div>
+                              <h2 className="text-lg font-semibold text-foreground">{bp.name}</h2>
+                              <p className="mt-1 text-sm text-muted-foreground">{bp.description}</p>
+                            </div>
+                            <Badge variant="outline" className="capitalize">{bp.status}</Badge>
+                          </div>
+                          <div className="space-y-4">
+                            <div>
+                              <h4 className="text-sm font-medium text-foreground mb-2">Capabilities</h4>
+                              <div className="flex flex-wrap gap-1.5">
+                                {bp.capabilities.map(cap => (
+                                  <span key={cap} className="rounded-md bg-accent/10 px-2 py-1 text-xs text-accent">{cap}</span>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-medium text-foreground mb-2">Security Constraints</h4>
+                              <div className="space-y-1">
+                                {bp.securityConstraints.map((constraint, i) => (
+                                  <p key={i} className="text-xs text-muted-foreground flex items-start gap-2">
+                                    <Shield className="h-3 w-3 mt-0.5 text-amber-400 shrink-0" />
+                                    {constraint}
+                                  </p>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-medium text-foreground mb-2">Required MCPs</h4>
+                              <div className="flex flex-wrap gap-1.5">
+                                {bp.requiredMCPServers.map(id => {
+                                  const mcp = mcpServers.find(m => m.id === id)
+                                  return (
+                                    <span key={id} className="rounded-md bg-secondary px-2 py-1 text-xs text-foreground">
+                                      {mcp?.name || id}
+                                    </span>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })() : (
+                      <p className="text-muted-foreground">No blueprint assigned to this agent.</p>
+                    )}
+                  </div>
+                </TabsContent>
+
+                {/* Identity Tab */}
+                <TabsContent value="identity" className="mt-6">
+                  <div className="rounded-xl border border-border bg-card p-6">
+                    {agent.entraIdentity ? (
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground mb-4">Entra Agent Identity</h2>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between border-b border-border pb-3">
+                            <span className="text-sm text-muted-foreground">Object ID</span>
+                            <code className="text-xs font-mono text-foreground bg-secondary px-2 py-1 rounded">{agent.entraIdentity.objectId}</code>
+                          </div>
+                          <div className="flex items-center justify-between border-b border-border pb-3">
+                            <span className="text-sm text-muted-foreground">Application ID</span>
+                            <code className="text-xs font-mono text-foreground bg-secondary px-2 py-1 rounded">{agent.entraIdentity.appId}</code>
+                          </div>
+                          <div className="flex items-center justify-between border-b border-border pb-3">
+                            <span className="text-sm text-muted-foreground">Tenant</span>
+                            <code className="text-xs font-mono text-foreground bg-secondary px-2 py-1 rounded">{agent.entraIdentity.tenantId}</code>
+                          </div>
+                          <div className="flex items-center justify-between border-b border-border pb-3">
+                            <span className="text-sm text-muted-foreground">Mailbox</span>
+                            <span className="text-sm text-foreground">{agent.entraIdentity.mailbox}</span>
+                          </div>
+                        </div>
+                        <h3 className="text-sm font-medium text-foreground mt-6 mb-3">Granted Permissions</h3>
+                        <div className="space-y-2">
+                          {agent.entraIdentity.permissions.map((perm, i) => {
+                            const mcp = mcpServers.find(m => m.id === perm.mcpId)
+                            return (
+                              <div key={i} className="rounded-lg bg-secondary/50 p-3 border border-border">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-sm font-medium text-foreground">{mcp?.name || perm.mcpId}</span>
+                                  <Badge variant="outline" className={cn("text-[10px]",
+                                    perm.consentStatus === 'granted' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                                    perm.consentStatus === 'pending' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                                    'bg-red-500/10 text-red-400 border-red-500/20'
+                                  )}>{perm.consentStatus}</Badge>
+                                </div>
+                                <div className="flex flex-wrap gap-1">
+                                  {perm.scopes.map(scope => (
+                                    <span key={scope} className="rounded bg-background px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">{scope}</span>
+                                  ))}
+                                </div>
+                                <span className="text-[10px] text-muted-foreground mt-1 block">Consent: {perm.consentType}</span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-muted-foreground">No Entra identity configured for this agent.</p>
+                    )}
+                  </div>
+                </TabsContent>
+
+                {/* Observability Tab */}
+                <TabsContent value="observability" className="mt-6">
+                  <div className="rounded-xl border border-border bg-card p-6">
+                    <h2 className="text-lg font-semibold text-foreground mb-1">Agent Traces</h2>
+                    <p className="text-sm text-muted-foreground mb-4">OpenTelemetry traces for this agent</p>
+                    {(() => {
+                      const traces = agentTraces.filter(t => t.agentId === agent.id)
+                      if (traces.length === 0) return <p className="text-muted-foreground text-sm">No traces recorded for this agent.</p>
+                      const successCount = traces.filter(t => t.result === 'success').length
+                      const avgDuration = Math.round(traces.reduce((sum, t) => sum + t.durationMs, 0) / traces.length)
+                      return (
+                        <div>
+                          <div className="grid grid-cols-3 gap-3 mb-4">
+                            <div className="rounded-lg bg-secondary/50 p-3 text-center">
+                              <p className="text-lg font-semibold">{traces.length}</p>
+                              <p className="text-[10px] text-muted-foreground">Total Traces</p>
+                            </div>
+                            <div className="rounded-lg bg-secondary/50 p-3 text-center">
+                              <p className="text-lg font-semibold text-emerald-400">{Math.round(successCount / traces.length * 100)}%</p>
+                              <p className="text-[10px] text-muted-foreground">Success Rate</p>
+                            </div>
+                            <div className="rounded-lg bg-secondary/50 p-3 text-center">
+                              <p className="text-lg font-semibold">{avgDuration}ms</p>
+                              <p className="text-[10px] text-muted-foreground">Avg Duration</p>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            {traces.map(trace => (
+                              <div key={trace.id} className="flex items-center gap-3 rounded-lg bg-secondary/50 p-3 border border-border">
+                                <div className={cn("h-2 w-2 rounded-full shrink-0",
+                                  trace.result === 'success' ? 'bg-emerald-500' : trace.result === 'failure' ? 'bg-red-500' : 'bg-amber-500'
+                                )} />
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs font-medium text-foreground capitalize">{trace.traceType.replace('_', ' ')}</span>
+                                    {trace.toolServerName && <span className="text-[10px] text-muted-foreground">→ {trace.toolServerName}</span>}
+                                  </div>
+                                </div>
+                                <span className="text-[10px] text-muted-foreground">{trace.durationMs}ms</span>
+                                <span className="text-[10px] text-muted-foreground">{new Date(trace.timestamp).toLocaleTimeString()}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )
+                    })()}
                   </div>
                 </TabsContent>
               </Tabs>
