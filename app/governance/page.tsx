@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { AppShell } from "@/components/app-shell"
 import { GlossaryTooltip } from "@/components/glossary-tooltip"
-import { governancePolicies, mcpServers } from "@/lib/data"
+import { governancePolicies, mcpServers, agentBlueprints, dlpPolicies, agentTraces, approvalRequests, agentData } from "@/lib/data"
 import { cn } from "@/lib/utils"
 
 const ruleTypeColors: Record<string, string> = {
@@ -44,6 +44,13 @@ const ruleTypeColors: Record<string, string> = {
   "rate-limit": "bg-amber-500/20 text-amber-400",
   authentication: "bg-emerald-500/20 text-emerald-400",
   compliance: "bg-violet-500/20 text-violet-400",
+}
+
+const dlpRuleColors: Record<string, string> = {
+  'connector-restriction': 'bg-rose-500/20 text-rose-400',
+  'data-boundary': 'bg-cyan-500/20 text-cyan-400',
+  'channel-block': 'bg-amber-500/20 text-amber-400',
+  'sensitivity-label': 'bg-violet-500/20 text-violet-400',
 }
 
 const statusColors: Record<string, string> = {
@@ -152,18 +159,26 @@ export default function GovernancePage() {
                 <FileText className="h-4 w-4" />
                 Policies
               </TabsTrigger>
+              <TabsTrigger value="blueprints" className="gap-2">
+                <Shield className="h-4 w-4" />
+                Blueprints
+              </TabsTrigger>
               <TabsTrigger value="approvals" className="gap-2">
                 <Clock className="h-4 w-4" />
-                Pending Approvals
-                {pendingApprovals.length > 0 && (
+                Approvals
+                {approvalRequests.filter(a => a.stage === 'pending' || a.stage === 'in-review').length > 0 && (
                   <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/20 text-xs text-amber-400">
-                    {pendingApprovals.length}
+                    {approvalRequests.filter(a => a.stage === 'pending' || a.stage === 'in-review').length}
                   </span>
                 )}
               </TabsTrigger>
               <TabsTrigger value="audit" className="gap-2">
                 <Eye className="h-4 w-4" />
-                Audit Log
+                Audit
+              </TabsTrigger>
+              <TabsTrigger value="compliance" className="gap-2">
+                <CheckCircle2 className="h-4 w-4" />
+                Compliance
               </TabsTrigger>
             </TabsList>
 
@@ -402,85 +417,115 @@ export default function GovernancePage() {
             <TabsContent value="audit" className="mt-6">
               <div className="rounded-xl border border-border bg-card">
                 <div className="border-b border-border p-4">
-                  <h3 className="font-semibold text-foreground">Audit Log</h3>
+                  <h3 className="font-semibold text-foreground font-mono">Advanced Hunting — Agent Tool Traces</h3>
                   <p className="text-sm text-muted-foreground">
-                    Track all governance-related activities
+                    Microsoft Defender-style trace inspection for all agent tool calls
                   </p>
                 </div>
 
-                <div className="divide-y divide-border">
-                  {[
-                    {
-                      action: "Policy updated",
-                      target: "Data Classification Policy",
-                      user: "Security Team",
-                      time: "2 hours ago",
-                      type: "policy",
-                    },
-                    {
-                      action: "MCP approved",
-                      target: "Axiom Logging",
-                      user: "Compliance Team",
-                      time: "1 day ago",
-                      type: "approval",
-                    },
-                    {
-                      action: "Rule added",
-                      target: "Rate Limiting Policy",
-                      user: "Platform Team",
-                      time: "2 days ago",
-                      type: "rule",
-                    },
-                    {
-                      action: "MCP rejected",
-                      target: "Unsafe MCP",
-                      user: "Security Team",
-                      time: "3 days ago",
-                      type: "rejection",
-                    },
-                    {
-                      action: "Policy created",
-                      target: "Compliance Verification",
-                      user: "Compliance Team",
-                      time: "1 week ago",
-                      type: "policy",
-                    },
-                  ].map((log, i) => (
-                    <div key={i} className="flex items-center gap-4 p-4">
-                      <div
-                        className={cn(
-                          "flex h-8 w-8 items-center justify-center rounded-full",
-                          log.type === "approval"
-                            ? "bg-emerald-500/20"
-                            : log.type === "rejection"
-                              ? "bg-red-500/20"
-                              : "bg-blue-500/20"
-                        )}
-                      >
-                        {log.type === "approval" ? (
-                          <Unlock className="h-4 w-4 text-emerald-400" />
-                        ) : log.type === "rejection" ? (
-                          <Lock className="h-4 w-4 text-red-400" />
-                        ) : (
-                          <Settings className="h-4 w-4 text-blue-400" />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm text-foreground">
-                          <span className="font-medium">{log.action}</span>
-                          {" - "}
-                          <span className="text-muted-foreground">
-                            {log.target}
-                          </span>
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {log.user} · {log.time}
-                        </p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                  ))}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border bg-secondary/50">
+                        <th className="px-4 py-2 text-left font-medium text-muted-foreground font-mono text-xs">Timestamp</th>
+                        <th className="px-4 py-2 text-left font-medium text-muted-foreground font-mono text-xs">Agent</th>
+                        <th className="px-4 py-2 text-left font-medium text-muted-foreground font-mono text-xs">Type</th>
+                        <th className="px-4 py-2 text-left font-medium text-muted-foreground font-mono text-xs">Tool Server</th>
+                        <th className="px-4 py-2 text-left font-medium text-muted-foreground font-mono text-xs">Result</th>
+                        <th className="px-4 py-2 text-left font-medium text-muted-foreground font-mono text-xs">Duration</th>
+                        <th className="px-4 py-2 text-left font-medium text-muted-foreground font-mono text-xs">Initiated By</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {agentTraces.map((trace) => (
+                        <tr key={trace.id} className="hover:bg-secondary/30 transition-colors">
+                          <td className="px-4 py-2 font-mono text-xs text-muted-foreground">{new Date(trace.timestamp).toLocaleString()}</td>
+                          <td className="px-4 py-2 text-xs text-foreground">{trace.agentName}</td>
+                          <td className="px-4 py-2"><Badge variant="outline" className="text-[10px] capitalize">{trace.traceType.replace('_', ' ')}</Badge></td>
+                          <td className="px-4 py-2 text-xs text-foreground">{trace.toolServerName || '—'}</td>
+                          <td className="px-4 py-2">
+                            <span className={cn("inline-flex items-center gap-1 text-[10px] font-medium",
+                              trace.result === 'success' ? 'text-emerald-400' : trace.result === 'failure' ? 'text-red-400' : 'text-amber-400'
+                            )}>
+                              <span className={cn("h-1.5 w-1.5 rounded-full",
+                                trace.result === 'success' ? 'bg-emerald-500' : trace.result === 'failure' ? 'bg-red-500' : 'bg-amber-500'
+                              )} />
+                              {trace.result}
+                            </span>
+                          </td>
+                          <td className="px-4 py-2 font-mono text-xs text-muted-foreground">{trace.durationMs}ms</td>
+                          <td className="px-4 py-2 text-xs text-muted-foreground">{trace.initiatedBy || '—'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
+              </div>
+            </TabsContent>
+
+            {/* Blueprints Tab */}
+            <TabsContent value="blueprints" className="mt-6">
+              <div className="grid gap-4 md:grid-cols-2">
+                {agentBlueprints.map((bp) => {
+                  const agentsUsing = agentData.filter(a => a.blueprintId === bp.id)
+                  return (
+                    <div key={bp.id} className="rounded-xl border border-border bg-card p-5">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="font-semibold text-foreground">{bp.name}</h3>
+                          <p className="text-sm text-muted-foreground mt-1">{bp.description}</p>
+                        </div>
+                        <Badge variant="outline" className={cn("capitalize text-xs",
+                          bp.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                          bp.status === 'review' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                          'bg-slate-500/10 text-slate-400 border-slate-500/20'
+                        )}>{bp.status}</Badge>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
+                        <span>{bp.requiredMCPServers.length} required MCPs</span>
+                        <span>·</span>
+                        <span>{agentsUsing.length} agents using</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {bp.capabilities.slice(0, 3).map(cap => (
+                          <span key={cap} className="rounded bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">{cap}</span>
+                        ))}
+                        {bp.capabilities.length > 3 && <span className="rounded bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">+{bp.capabilities.length - 3}</span>}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </TabsContent>
+
+            {/* Compliance Tab */}
+            <TabsContent value="compliance" className="mt-6">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {agentData.map((agent) => {
+                  const bp = agentBlueprints.find(b => b.id === agent.blueprintId)
+                  const score = agent.observabilityEnabled ? (agent.successRate > 97 ? 95 : agent.successRate > 95 ? 85 : 72) : 60
+                  return (
+                    <div key={agent.id} className="rounded-xl border border-border bg-card p-5">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-foreground text-sm">{agent.name}</h4>
+                        <span className={cn("text-sm font-semibold",
+                          score >= 90 ? 'text-emerald-400' : score >= 70 ? 'text-amber-400' : 'text-red-400'
+                        )}>{score}%</span>
+                      </div>
+                      {bp && <p className="text-xs text-muted-foreground mb-3">{bp.name}</p>}
+                      <div className="h-2 rounded-full bg-secondary overflow-hidden">
+                        <div className={cn("h-full rounded-full",
+                          score >= 90 ? 'bg-emerald-500' : score >= 70 ? 'bg-amber-500' : 'bg-red-500'
+                        )} style={{ width: `${score}%` }} />
+                      </div>
+                      <div className="mt-3 flex items-center gap-2 text-[10px] text-muted-foreground">
+                        {agent.observabilityEnabled && <span className="bg-violet-500/10 text-violet-400 px-1.5 py-0.5 rounded">OTel ✓</span>}
+                        {agent.entraIdentity && <span className="bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">Entra ✓</span>}
+                        {agent.blueprintId && <span className="bg-accent/10 text-accent px-1.5 py-0.5 rounded">Blueprint ✓</span>}
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </TabsContent>
           </Tabs>
