@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { AppShell } from "@/components/app-shell"
 import { GlossaryTooltip } from "@/components/glossary-tooltip"
-import { agentData } from "@/lib/data"
+import { agentData, agentBlueprints } from "@/lib/data"
 import { cn } from "@/lib/utils"
 
 const statusConfig = {
@@ -51,6 +51,15 @@ const statusConfig = {
     badgeClass: "bg-muted text-muted-foreground border-border",
     pulseClass: "bg-gray-500",
   },
+}
+
+const lifecycleColors: Record<string, string> = {
+  draft: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
+  review: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  approved: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  active: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  suspended: 'bg-red-500/10 text-red-400 border-red-500/20',
+  retired: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
 }
 
 export default function AgentsPage() {
@@ -204,6 +213,35 @@ export default function AgentsPage() {
                   <p className="mt-4 line-clamp-2 text-sm text-muted-foreground">
                     {agent.description}
                   </p>
+
+                  {/* Blueprint & Lifecycle badges */}
+                  {(agent.blueprintId || agent.lifecycleStatus) && (
+                    <div className="mt-3 flex items-center gap-2 flex-wrap">
+                      {agent.blueprintId && (() => {
+                        const bp = agentBlueprints.find(b => b.id === agent.blueprintId)
+                        return bp ? (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-medium text-accent border border-accent/20">
+                            {bp.name}
+                          </span>
+                        ) : null
+                      })()}
+                      {agent.lifecycleStatus && (
+                        <Badge variant="outline" className={cn("text-[10px] capitalize", lifecycleColors[agent.lifecycleStatus] || '')}>
+                          {agent.lifecycleStatus}
+                        </Badge>
+                      )}
+                      {agent.observabilityEnabled && (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-violet-500/10 px-1.5 py-0.5 text-[10px] text-violet-400" title="OpenTelemetry enabled">
+                          <Activity className="h-2.5 w-2.5" /> OTel
+                        </span>
+                      )}
+                      {agent.entraIdentity && (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-blue-500/10 px-1.5 py-0.5 text-[10px] text-blue-400" title="Entra Identity">
+                          🛡️ Entra
+                        </span>
+                      )}
+                    </div>
+                  )}
 
                   <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1.5">

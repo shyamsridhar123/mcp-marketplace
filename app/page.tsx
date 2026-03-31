@@ -20,6 +20,14 @@ import { AppShell } from "@/components/app-shell"
 import { OnboardingWizard } from "@/components/onboarding-wizard"
 import { GlossaryTooltip, InlineHelp } from "@/components/glossary-tooltip"
 import { mcpServers, agentData, governancePolicies } from "@/lib/data"
+import { Mail, Calendar, Users, FileText } from "lucide-react"
+
+const workIQIcons: Record<string, typeof Mail> = {
+  mail: Mail,
+  calendar: Calendar,
+  teams: Users,
+  sharepoint: FileText,
+}
 
 const categories = [
   { id: "all", label: "All Categories", count: mcpServers.length },
@@ -29,6 +37,7 @@ const categories = [
   { id: "devtools", label: "DevTools", count: mcpServers.filter(s => s.category === "DevTools").length },
   { id: "logging", label: "Logging", count: mcpServers.filter(s => s.category === "Logging").length },
   { id: "infrastructure", label: "Infrastructure", count: mcpServers.filter(s => s.category === "Infrastructure").length },
+  { id: "productivity", label: "Productivity", count: mcpServers.filter(s => s.category === "Productivity").length },
   { id: "security", label: "Security", count: mcpServers.filter(s => s.category === "Security").length },
   { id: "communication", label: "Communication", count: mcpServers.filter(s => s.category === "Communication").length },
 ]
@@ -56,8 +65,11 @@ export default function MarketplacePage() {
 
   // Calculate trending/popular MCPs
   const trendingMcps = [...mcpServers]
+    .filter(s => !s.isWorkIQ)
     .sort((a, b) => b.downloads - a.downloads)
     .slice(0, 3)
+
+  const workIQServers = mcpServers.filter(s => s.isWorkIQ)
 
   return (
     <AppShell>
@@ -111,7 +123,53 @@ export default function MarketplacePage() {
           {/* Divider */}
           <div className="mb-6 h-px bg-border" />
 
-          {/* Trending Section - New ambient awareness pattern */}
+          {/* Work IQ Featured Section */}
+          <section className="mb-8">
+            <div className="rounded-xl border border-accent/30 bg-gradient-to-r from-accent/10 via-violet-500/5 to-background p-6">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-violet-600">
+                  <span className="text-xs font-bold text-white">IQ</span>
+                </div>
+                <div>
+                  <h2 className="text-base font-semibold text-foreground">Work IQ MCP Servers</h2>
+                  <p className="text-xs text-muted-foreground">Powered by Microsoft Agent 365 — Enterprise intelligence layer</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-4 gap-3">
+                {workIQServers.map((mcp) => {
+                  const ServiceIcon = workIQIcons[mcp.workIQService || 'mail'] || Mail
+                  return (
+                    <Link
+                      key={mcp.id}
+                      href={`/mcp/${mcp.id}`}
+                      className="group flex flex-col rounded-lg border border-border/50 bg-card/50 p-4 transition-all hover:border-accent/50 hover:bg-card"
+                    >
+                      <div className="mb-3 flex items-center gap-2">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/20">
+                          <ServiceIcon className="h-4 w-4 text-accent" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{mcp.name}</p>
+                          <p className="text-[10px] text-muted-foreground">{mcp.provider}</p>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{mcp.shortDescription}</p>
+                      <div className="mt-auto flex items-center gap-2">
+                        {mcp.status === 'active' ? (
+                          <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]">Activated</Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[10px]">Pending Consent</Badge>
+                        )}
+                        <span className="text-[10px] text-muted-foreground ml-auto">{mcp.downloads.toLocaleString()} installs</span>
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* Trending Section */}
           <section className="mb-8">
             <div className="mb-3 flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-accent" />
