@@ -17,7 +17,6 @@ import {
   Server,
 } from "lucide-react"
 import { AppShell } from "@/components/app-shell"
-import { Button } from "@/components/ui/button"
 import { mcpServers, agentData } from "@/lib/data"
 import { approvalRequests, iqSignals, agentBlueprints } from "@/lib/data"
 import { motion } from "motion/react"
@@ -61,23 +60,11 @@ export default function DashboardPage() {
     <AppShell>
       <div className="mx-auto max-w-7xl px-6 py-8">
         {/* Header */}
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Platform overview — MCPs, agents, governance, and intelligence at a glance
-            </p>
-          </div>
-          <Button
-            asChild
-            variant="outline"
-            className="gap-2 self-start border-[#FFE600]/20 bg-[#FFE600]/5 text-[#FFE600] hover:bg-[#FFE600]/10 hover:text-[#FFE600]"
-          >
-            <Link href="/presentation">
-              Open EY strategy deck
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Platform overview — MCPs, agents, governance, and intelligence at a glance
+          </p>
         </div>
 
         {/* KPI Row */}

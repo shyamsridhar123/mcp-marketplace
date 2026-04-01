@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EY AI Agent Hub — Strategic Presentation</title>
+  <style>
+    :root {
+      --bg: #11131c;
+      --bg-elevated: #171a25;
+      --bg-panel: rgba(15, 17, 24, 0.82);
+      --card: rgba(255, 255, 255, 0.04);
+      --card-strong: rgba(255, 255, 255, 0.07);
+      --border: rgba(255, 255, 255, 0.1);
+      --text: #f8fafc;
+      --muted: #a0aec0;
+      --subtle: #7a8699;
+      --ey-yellow: #ffe600;
+      --cyan: #47c2e1;
+      --green: #4caf82;
+      --amber: #ffb547;
+      --red: #ff6b6b;
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --shadow: 0 40px 90px rgba(0, 0, 0, 0.35);
+      --max-width: 1440px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(255, 230, 0, 0.11), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(71, 194, 225, 0.09), transparent 26%),
+        linear-gradient(180deg, #11131c 0%, #0f1118 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .shell {
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 100;
+      backdrop-filter: blur(18px);
+      background: rgba(17, 19, 28, 0.84);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      width: min(calc(100% - 32px), var(--max-width));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: var(--ey-yellow);
+      color: #1a1a24;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      flex-shrink: 0;
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-copy span {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-top: 4px;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .nav a,
+    .nav button {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--subtle);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .nav a:hover,
+    .nav button:hover,
+    .nav a.active {
+      color: var(--text);
+      border-color: rgba(255, 230, 0, 0.2);
+      background: rgba(255, 230, 0, 0.08);
+    }
+
+    .deck {
+      width: min(calc(100% - 32px), var(--max-width));
+      margin: 0 auto;
+      padding-top: 92px;
+      padding-bottom: 80px;
+    }
+
+    .slide {
+      position: relative;
+      min-height: calc(100vh - 116px);
+      margin: 24px 0;
+      padding: 36px;
+      border: 1px solid var(--border);
+      border-radius: 34px;
+      background: linear-gradient(180deg, rgba(23, 26, 37, 0.92), rgba(15, 17, 24, 0.9));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .slide::before,
+    .slide::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(40px);
+      pointer-events: none;
+      opacity: 0.55;
+    }
+
+    .slide::before {
+      width: 320px;
+      height: 320px;
+      top: -80px;
+      right: -60px;
+      background: rgba(255, 230, 0, 0.12);
+    }
+
+    .slide::after {
+      width: 260px;
+      height: 260px;
+      left: -50px;
+      bottom: -70px;
+      background: rgba(71, 194, 225, 0.11);
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--ey-yellow);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    ul {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(42px, 6vw, 78px);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      max-width: 980px;
+    }
+
+    h2 {
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      max-width: 900px;
+    }
+
+    h3 {
+      font-size: 24px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .lede {
+      max-width: 900px;
+      font-size: clamp(18px, 2vw, 24px);
+      line-height: 1.65;
+      color: #dde7f3;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .subtle {
+      color: var(--subtle);
+    }
+
+    .pill-row,
+    .chip-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .pill,
+    .chip {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 14px;
+      color: #ecf2f8;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .hero-side,
+    .panel,
+    .card,
+    .stat,
+    .route-card,
+    .compare-card,
+    .timeline-card,
+    .source-card {
+      position: relative;
+      border: 1px solid var(--border);
+      background: var(--bg-panel);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+
+    .hero-side,
+    .panel,
+    .card,
+    .route-card,
+    .compare-card,
+    .timeline-card,
+    .source-card {
+      padding: 24px;
+    }
+
+    .hero-side::before,
+    .panel::before,
+    .card::before,
+    .route-card::before,
+    .compare-card::before,
+    .timeline-card::before,
+    .source-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 45%);
+      pointer-events: none;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .stat {
+      padding: 20px;
+      min-height: 160px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+
+    .stat-value {
+      margin-top: 18px;
+      font-size: clamp(34px, 4vw, 48px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      font-weight: 700;
+    }
+
+    .stat-copy {
+      margin-top: 14px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .section-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .section-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card-icon,
+    .route-icon,
+    .compare-icon,
+    .layer-icon,
+    .kicker-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 230, 0, 0.12);
+      color: var(--ey-yellow);
+      font-size: 24px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 230, 0, 0.12);
+    }
+
+    .card p,
+    .panel p,
+    .route-card p,
+    .compare-card p,
+    .timeline-card p,
+    .source-card p {
+      line-height: 1.7;
+    }
+
+    .bullet-list {
+      list-style: none;
+      padding: 0;
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .bullet-list li {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 10px;
+      align-items: start;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .bullet-list li::before {
+      content: "";
+      margin-top: 8px;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 6px rgba(76, 175, 130, 0.12);
+    }
+
+    .route-card {
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .route-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 230, 0, 0.28);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .route-top,
+    .compare-top,
+    .layer-top,
+    .source-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .arrow {
+      font-size: 24px;
+      color: var(--subtle);
+    }
+
+    .layer-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .layer-card {
+      position: relative;
+      border: 1px solid var(--border);
+      background: var(--bg-panel);
+      border-radius: var(--radius-xl);
+      padding: 22px;
+      overflow: hidden;
+    }
+
+    .layer-card::after {
+      content: "";
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255, 230, 0, 0.25), transparent);
+      opacity: 0.7;
+    }
+
+    .layer-chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .layer-chip {
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: #eaf0f6;
+    }
+
+    .callout {
+      padding: 22px 24px;
+      border-radius: 26px;
+      border: 1px solid rgba(255, 181, 71, 0.22);
+      background: rgba(255, 181, 71, 0.08);
+      color: #fff6e7;
+      line-height: 1.75;
+      font-size: 16px;
+    }
+
+    .callout strong {
+      color: #ffffff;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .compare-card {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-height: 100%;
+    }
+
+    .compare-footer {
+      margin-top: auto;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      color: #dbe5f1;
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .scenario {
+      padding: 24px;
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      background: var(--bg-panel);
+    }
+
+    .scenario h3 {
+      margin-top: 14px;
+    }
+
+    .scenario-flow {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .flow-step {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      border-radius: 18px;
+      padding: 14px 16px;
+      font-size: 14px;
+      color: #e6eef7;
+      line-height: 1.7;
+    }
+
+    .flow-step strong {
+      color: var(--ey-yellow);
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .timeline-card {
+      min-height: 100%;
+    }
+
+    .timeline-index {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--ey-yellow);
+    }
+
+    .action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      padding: 22px 24px;
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      background: var(--bg-panel);
+    }
+
+    .action-bar strong {
+      display: block;
+      font-size: clamp(22px, 3vw, 34px);
+      line-height: 1.18;
+      max-width: 900px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      border: 1px solid transparent;
+      transition: 180ms ease;
+      cursor: pointer;
+    }
+
+    .button.primary {
+      background: var(--ey-yellow);
+      color: #1a1a24;
+    }
+
+    .button.primary:hover {
+      background: #f4dc00;
+    }
+
+    .button.secondary {
+      background: rgba(255,255,255,0.04);
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .button.secondary:hover {
+      border-color: rgba(255, 230, 0, 0.24);
+      background: rgba(255, 230, 0, 0.08);
+    }
+
+    .source-grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 18px;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .source-link,
+    .receipt {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 14px 16px;
+      font-size: 14px;
+      color: #e8eef5;
+      line-height: 1.6;
+      transition: 180ms ease;
+    }
+
+    .source-link:hover {
+      border-color: rgba(255, 230, 0, 0.28);
+      background: rgba(255, 230, 0, 0.08);
+    }
+
+    .receipt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .progress {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 90;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(17, 19, 28, 0.86);
+      backdrop-filter: blur(14px);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .progress strong {
+      color: var(--text);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .progress-bar {
+      width: 88px;
+      height: 6px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .progress-bar span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--ey-yellow), var(--cyan));
+      transition: width 220ms ease;
+    }
+
+    .kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    @media (max-width: 1200px) {
+      .hero-grid,
+      .source-grid,
+      .scenario-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid,
+      .section-grid-3,
+      .compare-grid,
+      .timeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 840px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav {
+        justify-content: flex-start;
+      }
+
+      .deck {
+        padding-top: 144px;
+      }
+
+      .slide {
+        min-height: auto;
+        padding: 28px 22px;
+      }
+
+      .stats-grid,
+      .section-grid-3,
+      .section-grid-2,
+      .compare-grid,
+      .timeline,
+      .receipt-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .progress {
+        right: 12px;
+        left: 12px;
+        justify-content: space-between;
+      }
+    }
+
+    @media print {
+      html {
+        scroll-snap-type: none;
+      }
+
+      body {
+        background: #11131c;
+      }
+
+      .topbar,
+      .progress {
+        display: none !important;
+      }
+
+      .deck {
+        width: 100%;
+        padding: 0;
+      }
+
+      .slide {
+        min-height: auto;
+        break-after: page;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge">EY</div>
+          <div class="brand-copy">
+            <strong>EY AI Agent Hub</strong>
+            <span>Enterprise platform strategy</span>
+          </div>
+        </div>
+        <nav class="nav">
+          <a href="#slide-1">Thesis</a>
+          <a href="#slide-2">Proof</a>
+          <a href="#slide-3">Architecture</a>
+          <a href="#slide-4">Microsoft fit</a>
+          <a href="#slide-5">MCP layer</a>
+          <a href="#slide-6">Roadmap</a>
+          <button type="button" id="printButton">Print / PDF</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="deck">
+      <section id="slide-1" class="slide">
+        <p class="eyebrow">Strategic thesis</p>
+        <h1>Governed registration, orchestration, and packaging for MCPs, skills, and agents.</h1>
+        <p class="lede">
+          This platform is not just a marketplace. It is the EY operating layer that registers enterprise-ready capability,
+          applies governance and orchestration policies, and packages approved agent products for downstream application consumption.
+        </p>
+
+        <div class="pill-row">
+          <span class="pill">Register once, consume anywhere</span>
+          <span class="pill">Govern through the MCP tools layer</span>
+          <span class="pill">Package for downstream apps</span>
+          <span class="pill">Align to Agent 365 control-plane concepts</span>
+        </div>
+
+        <div class="hero-grid">
+          <div class="stats-grid">
+            <article class="stat">
+              <div class="stat-label">Governed integrations</div>
+              <div class="stat-value">19</div>
+              <div class="stat-copy">Including Work IQ, Dataverse &amp; Dynamics 365, Microsoft Graph, semantic search, observability, and database MCPs.</div>
+            </article>
+            <article class="stat">
+              <div class="stat-label">Registered agents</div>
+              <div class="stat-value">9 / 11</div>
+              <div class="stat-copy">Nine agents are active today across cloud ops, compliance, productivity, HR, and sales.</div>
+            </article>
+            <article class="stat">
+              <div class="stat-label">Blueprints &amp; policy packs</div>
+              <div class="stat-value">5 / 7</div>
+              <div class="stat-copy">Five blueprints plus seven governance and DLP policy packs already define the operating envelope.</div>
+            </article>
+            <article class="stat">
+              <div class="stat-label">Packaged skills</div>
+              <div class="stat-value">26</div>
+              <div class="stat-copy">Skills already connect the registry to actual agent behavior, rather than stopping at catalog metadata.</div>
+            </article>
+            <article class="stat">
+              <div class="stat-label">Pending approvals</div>
+              <div class="stat-value">4</div>
+              <div class="stat-copy">Access, activation, and registration workflows already exist — a strong sign this is an operating plane, not a toy demo.</div>
+            </article>
+            <article class="stat">
+              <div class="stat-label">Signals &amp; traces</div>
+              <div class="stat-value">15 / 16</div>
+              <div class="stat-copy">Intelligence signals and audit traces are already present, giving the platform governance plus observability depth.</div>
+            </article>
+          </div>
+
+          <aside class="hero-side">
+            <p class="eyebrow">Executive message</p>
+            <h3>Build anywhere. Govern centrally. Package for reuse.</h3>
+            <p class="muted" style="margin-top: 16px; font-size: 16px; line-height: 1.8;">
+              The cleanest articulation for EY is this: the hub registers MCPs, skills, and agents under EY policy,
+              orchestrates their approved use, and packages governed capability for downstream applications.
+            </p>
+            <ul class="bullet-list">
+              <li>It already contains the right nouns: integrations, skills, agents, blueprints, approvals, compliance, intelligence.</li>
+              <li>It already contains the right controls: Entra identity, DLP, audit traces, lifecycle states, Work IQ context.</li>
+              <li>It can govern even when the end-user experience lives somewhere else, including Copilot Studio or other integrated agent+UI platforms.</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <section id="slide-2" class="slide">
+        <p class="eyebrow">Repo proof</p>
+        <h2>What the codebase already proves</h2>
+        <p class="lede muted">
+          This presentation is grounded in working product surfaces already in the repository. The story is strategic, but it is not speculative.
+        </p>
+
+        <div class="section-grid-3">
+          <article class="route-card">
+            <div class="route-top">
+              <div class="route-icon">◌</div>
+              <div class="arrow">→</div>
+            </div>
+            <h3 style="margin-top: 18px;">Dashboard</h3>
+            <p class="muted" style="margin-top: 12px;">Executive KPIs across integrations, approvals, compliance, and intelligence.</p>
+            <p class="subtle" style="margin-top: 16px; font-size: 14px;">The homepage already behaves like an operating cockpit rather than a simple asset catalog.</p>
+          </article>
+
+          <article class="route-card">
+            <div class="route-top">
+              <div class="route-icon">⌘</div>
+              <div class="arrow">→</div>
+            </div>
+            <h3 style="margin-top: 18px;">Integrations</h3>
+            <p class="muted" style="margin-top: 12px;">Governed MCP catalog with Work IQ, CRM, Graph, analytics, and provider onboarding.</p>
+            <p class="subtle" style="margin-top: 16px; font-size: 14px;">This is the registration surface for tools that later become skills and packaged capabilities.</p>
+          </article>
+
+          <article class="route-card">
+            <div class="route-top">
+              <div class="route-icon">⚙</div>
+              <div class="arrow">→</div>
+            </div>
+            <h3 style="margin-top: 18px;">Agents</h3>
+            <p class="muted" style="margin-top: 12px;">Registry with lifecycle state, blueprint mapping, Entra identity, and observability indicators.</p>
+            <p class="subtle" style="margin-top: 16px; font-size: 14px;">The repo already models agent governance explicitly rather than hiding it in architecture diagrams.</p>
+          </article>
+
+          <article class="route-card">
+            <div class="route-top">
+              <div class="route-icon">⇄</div>
+              <div class="arrow">→</div>
+            </div>
+            <h3 style="margin-top: 18px;">Orchestration</h3>
+            <p class="muted" style="margin-top: 12px;">Visual composition of agents, skills, and MCP tools with test scenarios and package/deploy cues.</p>
+            <p class="subtle" style="margin-top: 16px; font-size: 14px;">This is where the platform begins to look like a governed composition studio, not a directory.</p>
+          </article>
+
+          <article class="route-card">
+            <div class="route-top">
+              <div class="route-icon">🛡</div>
+              <div class="arrow">→</div>
+            </div>
+            <h3 style="margin-top: 18px;">Governance</h3>
+            <p class="muted" style="margin-top: 12px;">Policies, blueprints, approvals, audit traces, and compliance scorecards.</p>
+            <p class="subtle" style="margin-top: 16px; font-size: 14px;">This is the strongest proof that the platform is already about control and operating policy, not just discovery.</p>
+          </article>
+
+          <article class="route-card">
+            <div class="route-top">
+              <div class="route-icon">✦</div>
+              <div class="arrow">→</div>
+            </div>
+            <h3 style="margin-top: 18px;">Intelligence</h3>
+            <p class="muted" style="margin-top: 12px;">Work IQ Data / Memory / Inference panels with signal streams and analytics handoff.</p>
+            <p class="subtle" style="margin-top: 16px; font-size: 14px;">The repo already visualizes the context layer that makes governed agents useful in enterprise work.</p>
+          </article>
+        </div>
+
+        <div class="panel">
+          <p class="eyebrow">Embedded assistant proof</p>
+          <h3 style="margin-top: 14px;">The product already includes an in-product assistant surface.</h3>
+          <p class="muted" style="margin-top: 14px; font-size: 16px; line-height: 1.8; max-width: 980px;">
+            The current “Ask the Hub” experience is implemented with the 21st SDK stack, not AG-UI. That matters because it means the platform already has the shape of governed agent interaction today, while AG-UI remains a future interoperability layer EY can adopt when it wants one protocol across multiple runtimes.
+          </p>
+        </div>
+      </section>
+
+      <section id="slide-3" class="slide">
+        <p class="eyebrow">Target operating model</p>
+        <h2>Build anywhere, govern centrally, consume safely</h2>
+        <p class="lede muted">
+          The architecture works best as four layers: experience surfaces, the EY governed platform plane, the MCP/runtime boundary, and the broader enterprise control plane.
+        </p>
+
+        <div class="layer-stack">
+          <article class="layer-card">
+            <div class="layer-top">
+              <div style="display:flex; gap:16px; align-items:center;">
+                <div class="layer-icon">①</div>
+                <div>
+                  <div class="eyebrow" style="color: var(--subtle);">Layer 1</div>
+                  <h3>Experience surfaces</h3>
+                </div>
+              </div>
+            </div>
+            <p class="muted" style="margin-top: 14px;">Where people and downstream systems actually consume capability.</p>
+            <div class="layer-chip-group">
+              <span class="layer-chip">EY downstream applications</span>
+              <span class="layer-chip">Embedded assistants</span>
+              <span class="layer-chip">Copilot Studio experiences</span>
+              <span class="layer-chip">Partner or ISV UIs</span>
+            </div>
+          </article>
+
+          <article class="layer-card">
+            <div class="layer-top">
+              <div style="display:flex; gap:16px; align-items:center;">
+                <div class="layer-icon">②</div>
+                <div>
+                  <div class="eyebrow" style="color: var(--subtle);">Layer 2</div>
+                  <h3>EY governed platform plane</h3>
+                </div>
+              </div>
+            </div>
+            <p class="muted" style="margin-top: 14px;">Where registry, orchestration, approvals, packaging, and telemetry are managed as reusable enterprise assets.</p>
+            <div class="layer-chip-group">
+              <span class="layer-chip">Integration registry</span>
+              <span class="layer-chip">Skill catalog</span>
+              <span class="layer-chip">Agent registry</span>
+              <span class="layer-chip">Blueprints</span>
+              <span class="layer-chip">Approvals</span>
+              <span class="layer-chip">Compliance scoring</span>
+              <span class="layer-chip">Package manifests</span>
+            </div>
+          </article>
+
+          <article class="layer-card">
+            <div class="layer-top">
+              <div style="display:flex; gap:16px; align-items:center;">
+                <div class="layer-icon">③</div>
+                <div>
+                  <div class="eyebrow" style="color: var(--subtle);">Layer 3</div>
+                  <h3>MCP and runtime boundary</h3>
+                </div>
+              </div>
+            </div>
+            <p class="muted" style="margin-top: 14px;">Where EY governs tool use and standardizes runtime behavior when needed.</p>
+            <div class="layer-chip-group">
+              <span class="layer-chip">MCP servers</span>
+              <span class="layer-chip">Skill-to-tool bindings</span>
+              <span class="layer-chip">Policy enforcement at invocation</span>
+              <span class="layer-chip">OpenTelemetry traces</span>
+              <span class="layer-chip">Optional AG-UI adapters</span>
+            </div>
+          </article>
+
+          <article class="layer-card">
+            <div class="layer-top">
+              <div style="display:flex; gap:16px; align-items:center;">
+                <div class="layer-icon">④</div>
+                <div>
+                  <div class="eyebrow" style="color: var(--subtle);">Layer 4</div>
+                  <h3>Enterprise control plane and systems of record</h3>
+                </div>
+              </div>
+            </div>
+            <p class="muted" style="margin-top: 14px;">The Microsoft and enterprise foundation that provides identity, security, context, and tenant-wide governance.</p>
+            <div class="layer-chip-group">
+              <span class="layer-chip">Agent 365</span>
+              <span class="layer-chip">Entra</span>
+              <span class="layer-chip">Defender</span>
+              <span class="layer-chip">Purview</span>
+              <span class="layer-chip">Microsoft 365 admin center</span>
+              <span class="layer-chip">Work IQ</span>
+              <span class="layer-chip">Dataverse &amp; Dynamics 365</span>
+              <span class="layer-chip">Microsoft Graph</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="callout">
+          <strong>Core message:</strong> downstream teams should consume a governed package — blueprint, skill bundle, approved MCP bindings, policy pack, identity profile, and telemetry contract — rather than rebuilding raw agent plumbing inside every app.
+        </div>
+      </section>
+
+      <section id="slide-4" class="slide">
+        <p class="eyebrow">Microsoft fit</p>
+        <h2>How Agent 365, Copilot Studio, and AG-UI fit the EY story</h2>
+        <p class="lede muted">
+          These three concepts do different jobs. The deck is strongest when it keeps their responsibilities separate.
+        </p>
+
+        <div class="compare-grid">
+          <article class="compare-card">
+            <div class="compare-top">
+              <div class="compare-icon">A</div>
+            </div>
+            <h3>Agent 365</h3>
+            <p class="muted">Microsoft positions Agent 365 as the enterprise control plane for agents across the organization, regardless of where they were built or acquired.</p>
+            <ul class="bullet-list" style="margin-top: 0;">
+              <li>Registry and map for all agents</li>
+              <li>Access control aligned to Entra and enterprise security posture</li>
+              <li>Governance, observability, security, and interoperability at tenant scale</li>
+            </ul>
+            <div class="compare-footer">
+              EY AI Agent Hub aligns naturally to this story as the business-facing governed registry and orchestration plane inside that wider control model.
+            </div>
+          </article>
+
+          <article class="compare-card">
+            <div class="compare-top">
+              <div class="compare-icon">C</div>
+            </div>
+            <h3>Copilot Studio</h3>
+            <p class="muted">Copilot Studio is a build, manage, and publish surface for agents, including scenarios that already have their own integrated end-user experience.</p>
+            <ul class="bullet-list" style="margin-top: 0;">
+              <li>Low-code and managed authoring surface</li>
+              <li>Supports internal and external publishing paths</li>
+              <li>Does not require EY to own every end-user UI</li>
+            </ul>
+            <div class="compare-footer">
+              If the UI already exists elsewhere, EY still adds value by governing MCP registration, approvals, packaging, telemetry, and allowed orchestration paths.
+            </div>
+          </article>
+
+          <article class="compare-card">
+            <div class="compare-top">
+              <div class="compare-icon">G</div>
+            </div>
+            <h3>AG-UI</h3>
+            <p class="muted">AG-UI is an open event-based agent-to-UI protocol covering run lifecycle, streaming messages, tool calls, and state synchronization.</p>
+            <ul class="bullet-list" style="margin-top: 0;">
+              <li>Text and reasoning message events</li>
+              <li>Tool-call start, args, end, and result semantics</li>
+              <li>State snapshots and deltas for rich interactive UIs</li>
+            </ul>
+            <div class="compare-footer">
+              This repo does <strong>not</strong> implement AG-UI today. It is the next interoperability layer EY can adopt to standardize multi-runtime front-end behavior.
+            </div>
+          </article>
+        </div>
+
+        <div class="callout">
+          <strong>Important honesty point:</strong> the current platform already aligns to Agent 365 concepts, but it should not claim AG-UI is already shipped. Position AG-UI as the interoperability layer EY can adopt on top of the existing governed hub.
+        </div>
+      </section>
+
+      <section id="slide-5" class="slide">
+        <p class="eyebrow">Governance through the MCP tools layer</p>
+        <h2>Even when the agent and UI are elsewhere, EY still owns the operating guardrails</h2>
+        <p class="lede muted">
+          This is the most important strategic clarification: if a solution such as Copilot Studio already has an integrated agent and UI, EY can still add governance and orchestration through the MCP layer.
+        </p>
+
+        <div class="scenario-grid">
+          <article class="scenario">
+            <div class="kicker-icon">UI</div>
+            <h3>Scenario A — EY owns the downstream application</h3>
+            <p class="muted" style="margin-top: 12px; line-height: 1.8;">The app consumes a governed package from the hub instead of hand-wiring agents, tools, approvals, and telemetry every time.</p>
+            <div class="scenario-flow">
+              <div class="flow-step"><strong>Register:</strong> approved MCPs, skills, agents, and blueprints are cataloged once.</div>
+              <div class="flow-step"><strong>Govern:</strong> identity, DLP, audit, lifecycle, and compliance are attached before release.</div>
+              <div class="flow-step"><strong>Package:</strong> downstream teams get a reusable capability bundle, not a pile of infrastructure decisions.</div>
+            </div>
+          </article>
+
+          <article class="scenario">
+            <div class="kicker-icon">MCP</div>
+            <h3>Scenario B — Another platform owns the experience</h3>
+            <p class="muted" style="margin-top: 12px; line-height: 1.8;">The user experience may live in Copilot Studio, a partner product, or another integrated surface, but EY still governs what tools and behaviors are allowed.</p>
+            <div class="scenario-flow">
+              <div class="flow-step"><strong>Register:</strong> MCP capabilities are inventoried and approved centrally.</div>
+              <div class="flow-step"><strong>Orchestrate:</strong> policy, audit, and approvals are enforced at the tool-access layer.</div>
+              <div class="flow-step"><strong>Observe:</strong> traces, signals, and compliance posture flow back into EY’s governed operating plane.</div>
+            </div>
+          </article>
+        </div>
+
+        <div class="panel">
+          <p class="eyebrow">Why this matters</p>
+          <h3 style="margin-top: 14px;">EY does not need to win every UI to win the platform layer.</h3>
+          <ul class="bullet-list">
+            <li>Govern the approved MCP estate once instead of rebuilding guardrails per solution.</li>
+            <li>Turn orchestration into policy-managed capability, not just prompt wiring.</li>
+            <li>Make downstream application teams faster by handing them approved packages with clear ownership and telemetry.</li>
+            <li>Stay compatible with Microsoft-native surfaces while still adding EY value on governance, packaging, and oversight.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="slide-6" class="slide">
+        <p class="eyebrow">Roadmap</p>
+        <h2>Recommended next moves for EY</h2>
+        <p class="lede muted">
+          The goal is not to create another agent ecosystem from scratch. It is to use this platform as the governed productization layer over capabilities that may be built in multiple runtimes and consumed in multiple experiences.
+        </p>
+
+        <div class="timeline">
+          <article class="timeline-card">
+            <div class="timeline-index">Phase 1</div>
+            <h3 style="margin-top: 16px;">Operationalize the registry</h3>
+            <p class="muted" style="margin-top: 14px;">Use the current hub as the source of truth for integrations, skills, agents, identity, and approvals.</p>
+            <ul class="bullet-list">
+              <li>Treat Marketplace, Agents, and Governance as the authoritative inventory.</li>
+              <li>Formalize approval workflows for MCP registration and blueprint activation.</li>
+              <li>Attach ownership, lifecycle, and compliance metadata to every governed asset.</li>
+            </ul>
+          </article>
+
+          <article class="timeline-card">
+            <div class="timeline-index">Phase 2</div>
+            <h3 style="margin-top: 16px;">Productize packaging</h3>
+            <p class="muted" style="margin-top: 14px;">Turn governed capabilities into consumable packages rather than one-off solutions.</p>
+            <ul class="bullet-list">
+              <li>Define package manifests for blueprint, skills, allowed MCPs, identity, and telemetry.</li>
+              <li>Make downstream consumption paths explicit for internal apps and embedded assistants.</li>
+              <li>Support reuse across EY apps, partner solutions, and Microsoft-native surfaces.</li>
+            </ul>
+          </article>
+
+          <article class="timeline-card">
+            <div class="timeline-index">Phase 3</div>
+            <h3 style="margin-top: 16px;">Add interoperability and policy automation</h3>
+            <p class="muted" style="margin-top: 14px;">Standardize runtime contracts and automate enforcement at the MCP tools boundary.</p>
+            <ul class="bullet-list">
+              <li>Introduce AG-UI adapters where multi-runtime UI interoperability matters.</li>
+              <li>Enforce policy, audit, and DLP at MCP invocation boundaries.</li>
+              <li>Feed signals and traces into a repeatable enterprise operating model aligned to Agent 365.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="action-bar">
+          <div>
+            <div class="eyebrow">Closing message</div>
+            <strong>The winning story is not “we built another agent UI.” It is “we built the governed plane that lets EY safely register, orchestrate, and productize agent capability for every downstream experience.”</strong>
+          </div>
+          <div class="button-row">
+            <button class="button primary" type="button" id="nextButton">Next slide</button>
+            <button class="button secondary" type="button" id="backToTopButton">Back to top</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="sources" class="slide">
+        <p class="eyebrow">Grounding</p>
+        <h2>Sources and repo receipts</h2>
+        <p class="lede muted">
+          The claims in this presentation are grounded in Microsoft documentation and in the repository’s existing product surfaces, route structure, and mock operating model.
+        </p>
+
+        <div class="source-grid">
+          <article class="source-card">
+            <div class="source-top">
+              <div class="kicker-icon">↗</div>
+            </div>
+            <h3 style="margin-top: 18px;">External sources</h3>
+            <div class="source-list">
+              <a class="source-link" href="https://www.microsoft.com/en-us/microsoft-agent-365" target="_blank" rel="noreferrer">Microsoft Agent 365 overview</a>
+              <a class="source-link" href="https://learn.microsoft.com/en-us/microsoft-agent-365/" target="_blank" rel="noreferrer">Microsoft Agent 365 documentation</a>
+              <a class="source-link" href="https://www.microsoft.com/en-us/microsoft-365-copilot/microsoft-copilot-studio" target="_blank" rel="noreferrer">Microsoft Copilot Studio</a>
+              <a class="source-link" href="https://github.com/ag-ui-protocol/ag-ui" target="_blank" rel="noreferrer">AG-UI protocol documentation</a>
+            </div>
+          </article>
+
+          <article class="source-card">
+            <div class="source-top">
+              <div class="kicker-icon">#</div>
+            </div>
+            <h3 style="margin-top: 18px;">Repo receipts</h3>
+            <div class="receipt-grid">
+              <div class="receipt"><strong>app/page.tsx</strong><br />Executive dashboard and KPI framing</div>
+              <div class="receipt"><strong>app/marketplace/page.tsx</strong><br />Governed integration registry and Work IQ placement</div>
+              <div class="receipt"><strong>app/agents/page.tsx</strong><br />Agent lifecycle, blueprint, Entra, and telemetry indicators</div>
+              <div class="receipt"><strong>app/governance/page.tsx</strong><br />Policies, approvals, audit, and compliance proof</div>
+              <div class="receipt"><strong>app/intelligence/page.tsx</strong><br />Data / Memory / Inference structure</div>
+              <div class="receipt"><strong>app/canvas/page.tsx</strong><br />Orchestration narrative and packaging cue</div>
+              <div class="receipt"><strong>components/hub-assistant-surface.tsx</strong><br />Embedded assistant experience</div>
+              <div class="receipt"><strong>lib/data.ts + lib/data/governance.ts</strong><br />Blueprints, DLP, approvals, traces, and signals</div>
+            </div>
+          </article>
+        </div>
+
+        <div class="panel">
+          <div class="source-top">
+            <div>
+              <div class="eyebrow">Presentation notes</div>
+              <h3 style="margin-top: 12px;">Ready for walkthrough, review, or PDF export</h3>
+            </div>
+          </div>
+          <p class="muted" style="margin-top: 14px; font-size: 16px; line-height: 1.8; max-width: 980px;">
+            Use the browser view for a live walkthrough, or print to PDF for sharing with stakeholders. The deck is designed to stand on its own without additional speaker notes.
+          </p>
+          <p class="subtle" style="margin-top: 16px; font-size: 14px; line-height: 1.8;">
+            Keyboard tip: use <span class="kbd">↓</span> and <span class="kbd">↑</span> to move between sections.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <div class="progress" aria-live="polite">
+      <strong id="progressLabel">Slide 1</strong>
+      <div class="progress-bar"><span id="progressBar"></span></div>
+      <span id="progressHint">Use arrows</span>
+    </div>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const navLinks = Array.from(document.querySelectorAll('.nav a'));
+    const progressLabel = document.getElementById('progressLabel');
+    const progressBar = document.getElementById('progressBar');
+    const printButton = document.getElementById('printButton');
+    const nextButton = document.getElementById('nextButton');
+    const backToTopButton = document.getElementById('backToTopButton');
+
+    let activeIndex = 0;
+
+    function setActive(index) {
+      activeIndex = Math.max(0, Math.min(index, slides.length - 1));
+      navLinks.forEach((link) => {
+        const isActive = link.getAttribute('href') === `#${slides[activeIndex].id}`;
+        link.classList.toggle('active', isActive);
+      });
+      progressLabel.textContent = `Slide ${activeIndex + 1}`;
+      progressBar.style.width = `${((activeIndex + 1) / slides.length) * 100}%`;
+    }
+
+    function goTo(index) {
+      const slide = slides[index];
+      if (!slide) return;
+      slide.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const index = slides.indexOf(entry.target);
+          if (index >= 0) setActive(index);
+        }
+      });
+    }, { threshold: 0.45 });
+
+    slides.forEach((slide) => observer.observe(slide));
+    setActive(0);
+
+    document.addEventListener('keydown', (event) => {
+      const tag = document.activeElement && document.activeElement.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+      if (event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ') {
+        event.preventDefault();
+        goTo(activeIndex + 1);
+      }
+
+      if (event.key === 'ArrowUp' || event.key === 'PageUp') {
+        event.preventDefault();
+        goTo(activeIndex - 1);
+      }
+
+      if (event.key.toLowerCase() === 'home') {
+        event.preventDefault();
+        goTo(0);
+      }
+    });
+
+    printButton.addEventListener('click', () => window.print());
+    nextButton.addEventListener('click', () => goTo(activeIndex + 1));
+    backToTopButton.addEventListener('click', () => goTo(0));
+  </script>
+</body>
+</html>
