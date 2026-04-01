@@ -18,8 +18,8 @@ interface TestStep { label: string; status: "pending" | "running" | "success"; d
 
 const demoConfigs = [
   {
-    id: "touchpoint", name: "Touch Point Agent",
-    description: "Capture every customer interaction across email, calendar, and CRM using Semantic Search",
+    id: "touchpoint", name: "Sales Rep: Touch Point Capture",
+    description: "Sales Rep Agent captures every customer interaction across email, calendar, and CRM using Semantic Search",
     agentId: "sales-rep-agent", testScenario: "Customer follow-up after a demo call",
     testSteps: [
       "🔍 Semantic Search: finding all Contoso Ltd interactions...",
@@ -34,8 +34,8 @@ const demoConfigs = [
     ],
   },
   {
-    id: "hygiene", name: "Sales Hygiene Agent",
-    description: "Audit pipeline quality using Semantic Search to cross-reference CRM with communications",
+    id: "hygiene", name: "Sales Manager: Pipeline Hygiene",
+    description: "Sales Manager Agent audits pipeline quality using Semantic Search to cross-reference CRM with communications",
     agentId: "sales-manager-agent", testScenario: "Weekly pipeline hygiene audit",
     testSteps: [
       "🔍 Semantic Search: cross-referencing 47 opps with all data...",
@@ -49,8 +49,8 @@ const demoConfigs = [
     ],
   },
   {
-    id: "content", name: "Content Intelligence",
-    description: "Semantic search across docs, emails, and channels to find, summarize, and curate content",
+    id: "content", name: "Knowledge Worker: Content Search",
+    description: "Knowledge Worker Agent uses semantic search across docs, emails, and channels to find, summarize, and curate content",
     agentId: "knowledge-worker-agent", testScenario: "Find Q1 product strategy content",
     testSteps: [
       "🔍 Semantic Search: 'Q1 product strategy' across 1,247 docs...",
@@ -64,8 +64,8 @@ const demoConfigs = [
     ],
   },
   {
-    id: "campaign", name: "Campaign Orchestrator",
-    description: "Use Semantic Search to find past campaigns, then segment and personalize outreach",
+    id: "campaign", name: "Lead Gen: Campaign Orchestration",
+    description: "Lead Generation Agent uses Semantic Search to find past campaigns, then segments and personalizes outreach",
     agentId: "lead-gen-agent", testScenario: "Launch Q1 enterprise upsell campaign",
     testSteps: [
       "🔍 Semantic Search: finding similar past campaigns...",
@@ -79,8 +79,8 @@ const demoConfigs = [
     ],
   },
   {
-    id: "deal-intel", name: "Deal Intelligence",
-    description: "Semantic Search across all deal communications to surface risks and update forecasts",
+    id: "deal-intel", name: "Sales Manager: Deal Intelligence",
+    description: "Sales Manager Agent uses Semantic Search across all deal communications to surface risks and update forecasts",
     agentId: "sales-manager-agent", testScenario: "Risk analysis for top 5 deals",
     testSteps: [
       "🔍 Semantic Search: scanning 400+ deal communications...",
