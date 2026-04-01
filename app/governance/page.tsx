@@ -23,6 +23,7 @@ import {
   ChevronDown,
   ChevronUp,
   ArrowRight,
+  GripVertical,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -295,123 +296,7 @@ export default function GovernancePage() {
             </TabsContent>
 
             <TabsContent value="approvals" className="mt-6">
-              {/* Kanban-style Approval Workflow */}
-              <div className="grid grid-cols-3 gap-4">
-                {/* Pending Review Column */}
-                <div className="rounded-xl border border-border bg-card">
-                  <div className="border-b border-border p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-amber-500" />
-                        <h3 className="font-semibold text-foreground">Pending Review</h3>
-                      </div>
-                      <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/30">
-                        {pendingApprovals.length}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="p-2 space-y-2 max-h-96 overflow-y-auto">
-                    {pendingApprovals.length > 0 ? (
-                      pendingApprovals.map((mcp) => (
-                        <div
-                          key={mcp.id}
-                          className="rounded-lg border border-border bg-background p-3 hover:border-accent/50 transition-colors cursor-pointer"
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-secondary shrink-0">
-                              <Server className="h-4 w-4 text-muted-foreground" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium text-foreground text-sm truncate">{mcp.name}</p>
-                              <p className="text-xs text-muted-foreground">{mcp.provider}</p>
-                              <div className="mt-2 flex items-center gap-2">
-                                <Badge variant="outline" className={cn(
-                                  "text-[10px]",
-                                  mcp.complianceLevel === "high" ? "border-emerald-500/30 text-emerald-400" :
-                                  mcp.complianceLevel === "medium" ? "border-amber-500/30 text-amber-400" :
-                                  "border-red-500/30 text-red-400"
-                                )}>
-                                  {mcp.complianceLevel} compliance
-                                </Badge>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="mt-3 flex gap-1">
-                            <Button size="sm" variant="outline" className="flex-1 h-7 text-xs bg-transparent">
-                              <Eye className="h-3 w-3 mr-1" />
-                              Review
-                            </Button>
-                            <Button size="sm" className="h-7 w-7 p-0 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30">
-                              <Check className="h-3 w-3" />
-                            </Button>
-                            <Button size="sm" variant="destructive" className="h-7 w-7 p-0">
-                              <X className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="flex flex-col items-center justify-center py-8 text-center">
-                        <CheckCircle2 className="h-8 w-8 text-emerald-400 mb-2" />
-                        <p className="text-sm text-muted-foreground">No pending reviews</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* In Review Column */}
-                <div className="rounded-xl border border-border bg-card">
-                  <div className="border-b border-border p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-blue-500" />
-                        <h3 className="font-semibold text-foreground">In Review</h3>
-                      </div>
-                      <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/30">
-                        0
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="p-2 space-y-2 max-h-96 overflow-y-auto">
-                    <div className="flex flex-col items-center justify-center py-8 text-center border border-dashed border-border rounded-lg">
-                      <p className="text-sm text-muted-foreground">Drag items here</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Approved Column */}
-                <div className="rounded-xl border border-border bg-card">
-                  <div className="border-b border-border p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                        <h3 className="font-semibold text-foreground">Approved</h3>
-                      </div>
-                      <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
-                        {mcpServers.filter(m => m.status === "approved" || m.isInstalled).length}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="p-2 space-y-2 max-h-96 overflow-y-auto">
-                    {mcpServers.filter(m => m.isInstalled).slice(0, 3).map((mcp) => (
-                      <div
-                        key={mcp.id}
-                        className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-500/20 shrink-0">
-                            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-foreground text-sm truncate">{mcp.name}</p>
-                            <p className="text-xs text-muted-foreground">{mcp.provider}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <ApprovalsKanban />
             </TabsContent>
 
             <TabsContent value="audit" className="mt-6">
@@ -532,5 +417,194 @@ export default function GovernancePage() {
         </div>
       </div>
     </AppShell>
+  )
+}
+
+// ─── Drag-and-Drop Approvals Kanban ───────────────────────────────
+
+type ColumnId = "pending" | "in-review" | "approved" | "rejected"
+
+interface KanbanCard {
+  id: string
+  name: string
+  provider: string
+  complianceLevel: string
+  type: "mcp" | "agent" | "blueprint"
+}
+
+const columnConfig: Record<ColumnId, { label: string; dot: string; badgeCls: string; cardBorder: string }> = {
+  pending: { label: "Pending Review", dot: "bg-[#FFB547]", badgeCls: "bg-[#FFB547]/10 text-[#FFB547] border-[#FFB547]/30", cardBorder: "border-border" },
+  "in-review": { label: "In Review", dot: "bg-[#47C2E1]", badgeCls: "bg-[#47C2E1]/10 text-[#47C2E1] border-[#47C2E1]/30", cardBorder: "border-[#47C2E1]/30" },
+  approved: { label: "Approved", dot: "bg-[#4CAF82]", badgeCls: "bg-[#4CAF82]/10 text-[#4CAF82] border-[#4CAF82]/30", cardBorder: "border-[#4CAF82]/30" },
+  rejected: { label: "Rejected", dot: "bg-[#FF6B6B]", badgeCls: "bg-[#FF6B6B]/10 text-[#FF6B6B] border-[#FF6B6B]/30", cardBorder: "border-[#FF6B6B]/30" },
+}
+
+function buildInitialColumns(): Record<ColumnId, KanbanCard[]> {
+  const pending = mcpServers.filter(m => m.status === "pending").map(m => ({
+    id: m.id, name: m.name, provider: m.provider, complianceLevel: m.complianceLevel, type: "mcp" as const,
+  }))
+  const approved = mcpServers.filter(m => m.isInstalled).slice(0, 5).map(m => ({
+    id: m.id + "-a", name: m.name, provider: m.provider, complianceLevel: m.complianceLevel, type: "mcp" as const,
+  }))
+  return { pending, "in-review": [], approved, rejected: [] }
+}
+
+function ApprovalsKanban() {
+  const [columns, setColumns] = useState<Record<ColumnId, KanbanCard[]>>(buildInitialColumns)
+  const [dragItem, setDragItem] = useState<{ card: KanbanCard; from: ColumnId } | null>(null)
+  const [dragOverCol, setDragOverCol] = useState<ColumnId | null>(null)
+
+  const handleDragStart = (card: KanbanCard, from: ColumnId) => (e: React.DragEvent) => {
+    setDragItem({ card, from })
+    e.dataTransfer.effectAllowed = "move"
+    // Make the drag image slightly transparent
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = "0.5"
+    }
+  }
+
+  const handleDragEnd = (e: React.DragEvent) => {
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = "1"
+    }
+    setDragItem(null)
+    setDragOverCol(null)
+  }
+
+  const handleDragOver = (col: ColumnId) => (e: React.DragEvent) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = "move"
+    setDragOverCol(col)
+  }
+
+  const handleDragLeave = () => {
+    setDragOverCol(null)
+  }
+
+  const handleDrop = (toCol: ColumnId) => (e: React.DragEvent) => {
+    e.preventDefault()
+    setDragOverCol(null)
+    if (!dragItem || dragItem.from === toCol) return
+
+    setColumns(prev => {
+      const next = { ...prev }
+      next[dragItem.from] = prev[dragItem.from].filter(c => c.id !== dragItem.card.id)
+      next[toCol] = [...prev[toCol], dragItem.card]
+      return next
+    })
+    setDragItem(null)
+  }
+
+  const moveCard = (card: KanbanCard, from: ColumnId, to: ColumnId) => {
+    setColumns(prev => {
+      const next = { ...prev }
+      next[from] = prev[from].filter(c => c.id !== card.id)
+      next[to] = [...prev[to], card]
+      return next
+    })
+  }
+
+  const orderedColumns: ColumnId[] = ["pending", "in-review", "approved", "rejected"]
+
+  return (
+    <div className="grid grid-cols-4 gap-3">
+      {orderedColumns.map(colId => {
+        const cfg = columnConfig[colId]
+        const cards = columns[colId]
+        const isOver = dragOverCol === colId
+
+        return (
+          <div
+            key={colId}
+            className={cn(
+              "rounded-lg border bg-card transition-all min-h-[300px]",
+              isOver ? "border-[#FFE600]/50 bg-[#FFE600]/5" : "border-border"
+            )}
+            onDragOver={handleDragOver(colId)}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop(colId)}
+          >
+            {/* Column Header */}
+            <div className="border-b border-border p-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className={cn("h-2 w-2 rounded-full", cfg.dot)} />
+                  <h3 className="text-sm font-semibold text-foreground">{cfg.label}</h3>
+                </div>
+                <Badge variant="outline" className={cn("text-[10px]", cfg.badgeCls)}>
+                  {cards.length}
+                </Badge>
+              </div>
+            </div>
+
+            {/* Cards */}
+            <div className="p-2 space-y-2">
+              {cards.length > 0 ? cards.map(card => (
+                <div
+                  key={card.id}
+                  draggable
+                  onDragStart={handleDragStart(card, colId)}
+                  onDragEnd={handleDragEnd}
+                  className={cn(
+                    "rounded-lg border bg-background p-3 cursor-grab active:cursor-grabbing transition-all hover:border-[#FFE600]/40 group select-none",
+                    cfg.cardBorder
+                  )}
+                >
+                  <div className="flex items-start gap-2">
+                    <GripVertical className="h-4 w-4 text-muted-foreground/30 mt-0.5 group-hover:text-muted-foreground shrink-0 transition-colors" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{card.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{card.provider}</p>
+                      <Badge variant="outline" className={cn(
+                        "text-[10px] mt-1.5",
+                        card.complianceLevel === "high" ? "border-[#4CAF82]/30 text-[#4CAF82]" :
+                        card.complianceLevel === "medium" ? "border-[#FFB547]/30 text-[#FFB547]" :
+                        "border-[#FF6B6B]/30 text-[#FF6B6B]"
+                      )}>
+                        {card.complianceLevel}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  {/* Quick action buttons per column */}
+                  {colId === "pending" && (
+                    <div className="mt-2 flex gap-1">
+                      <Button size="sm" variant="outline" className="flex-1 h-6 text-[10px] bg-transparent" onClick={() => moveCard(card, colId, "in-review")}>
+                        <Eye className="h-3 w-3 mr-1" /> Review
+                      </Button>
+                      <Button size="sm" className="h-6 w-6 p-0 bg-[#4CAF82]/20 text-[#4CAF82] hover:bg-[#4CAF82]/30" onClick={() => moveCard(card, colId, "approved")}>
+                        <Check className="h-3 w-3" />
+                      </Button>
+                      <Button size="sm" className="h-6 w-6 p-0 bg-[#FF6B6B]/20 text-[#FF6B6B] hover:bg-[#FF6B6B]/30" onClick={() => moveCard(card, colId, "rejected")}>
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                  {colId === "in-review" && (
+                    <div className="mt-2 flex gap-1">
+                      <Button size="sm" className="flex-1 h-6 text-[10px] bg-[#4CAF82]/20 text-[#4CAF82] hover:bg-[#4CAF82]/30" onClick={() => moveCard(card, colId, "approved")}>
+                        <Check className="h-3 w-3 mr-1" /> Approve
+                      </Button>
+                      <Button size="sm" className="flex-1 h-6 text-[10px] bg-[#FF6B6B]/20 text-[#FF6B6B] hover:bg-[#FF6B6B]/30" onClick={() => moveCard(card, colId, "rejected")}>
+                        <X className="h-3 w-3 mr-1" /> Reject
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )) : (
+                <div className={cn(
+                  "flex flex-col items-center justify-center py-8 text-center rounded-lg border border-dashed transition-colors",
+                  isOver ? "border-[#FFE600]/50 bg-[#FFE600]/5" : "border-border"
+                )}>
+                  <p className="text-xs text-muted-foreground">
+                    {isOver ? "Drop here" : "Drag cards here"}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      })}
+    </div>
   )
 }
