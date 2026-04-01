@@ -18,7 +18,7 @@ interface TestStep { label: string; status: "pending" | "running" | "success"; d
 
 const demoConfigs = [
   {
-    id: "touchpoint", name: "Sales Rep: Touch Point Capture",
+    id: "touchpoint", name: "Touch Point Agent",
     description: "Sales Rep Agent captures every customer interaction across email, calendar, and CRM using Semantic Search",
     agentId: "sales-rep-agent", testScenario: "Customer follow-up after a demo call",
     testSteps: [
