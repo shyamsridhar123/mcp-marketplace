@@ -528,11 +528,13 @@ export default function OrchestrationPage() {
           {/* Canvas Area */}
           <div
             ref={canvasRef}
-            className="flex-1 relative bg-[#1A1A24] overflow-hidden"
+            className="flex-1 relative bg-[#1A1A24] overflow-auto"
             onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "copy" }}
             onDrop={handleCanvasDrop}
             style={{ backgroundImage: "radial-gradient(circle, #3B3B47 1px, transparent 1px)", backgroundSize: "24px 24px" }}
           >
+            {/* Inner canvas with min size for scrolling */}
+            <div className="relative" style={{ minWidth: 1200, minHeight: 600 }}>
             {canvasItems.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
@@ -616,6 +618,7 @@ export default function OrchestrationPage() {
                 </motion.div>
               )
             })}
+            </div>{/* end inner canvas */}
           </div>
         </div>
 
