@@ -60,7 +60,7 @@ export default async function MCPDetailPage({
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      Logging: "bg-violet-500/20",
+      Logging: "bg-[#FFE600]/20",
       Database: "bg-orange-500/20",
       DevTools: "bg-emerald-500/20",
       Analytics: "bg-blue-500/20",
@@ -95,7 +95,7 @@ export default async function MCPDetailPage({
                   className={cn(
                     "h-8 w-8 rounded-lg",
                     mcp.category === "Logging"
-                      ? "bg-violet-500"
+                      ? "bg-[#FFE600]"
                       : mcp.category === "Database"
                         ? "bg-orange-500"
                         : mcp.category === "DevTools"

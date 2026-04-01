@@ -231,7 +231,7 @@ export default function AgentsPage() {
                         </Badge>
                       )}
                       {agent.observabilityEnabled && (
-                        <span className="inline-flex items-center gap-1 rounded-md bg-violet-500/10 px-1.5 py-0.5 text-[10px] text-violet-400" title="OpenTelemetry enabled">
+                        <span className="inline-flex items-center gap-1 rounded-md bg-[#FFE600]/10 px-1.5 py-0.5 text-[10px] text-[#FFE600]" title="OpenTelemetry enabled">
                           <Activity className="h-2.5 w-2.5" /> OTel
                         </span>
                       )}

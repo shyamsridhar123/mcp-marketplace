@@ -52,7 +52,7 @@ const categoryColors: Record<string, string> = {
   Database: "bg-orange-500/20 text-orange-400",
   Security: "bg-red-500/20 text-red-400",
   DevOps: "bg-cyan-500/20 text-cyan-400",
-  "AI/ML": "bg-violet-500/20 text-violet-400",
+  "AI/ML": "bg-[#47C2E1]/20 text-[#47C2E1]",
   Productivity: "bg-indigo-500/20 text-indigo-400",
   Custom: "bg-muted text-muted-foreground",
 }

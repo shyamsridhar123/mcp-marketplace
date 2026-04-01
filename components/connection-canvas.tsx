@@ -73,7 +73,7 @@ interface ConnectionDragState {
 // Helper to get category color
 function getCategoryColor(category: string): string {
   const colors: Record<string, string> = {
-    "Logging": "bg-violet-500",
+    "Logging": "bg-[#FFE600]",
     "Database": "bg-orange-500",
     "DevTools": "bg-emerald-500",
     "Infrastructure": "bg-blue-500",
@@ -81,7 +81,7 @@ function getCategoryColor(category: string): string {
     "Analytics": "bg-cyan-500",
     "Communication": "bg-yellow-500",
     "Security": "bg-red-500",
-    "AI/ML": "bg-purple-500",
+    "AI/ML": "bg-[#47C2E1]",
   }
   return colors[category] || "bg-gray-500"
 }
@@ -160,7 +160,7 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
     const installedMcps = mcps.filter(m => m.isInstalled && !m.isWorkIQ)
     const workIQMcps = mcps.filter(m => m.isWorkIQ && m.isInstalled)
 
-    // Position Work IQ MCPs at the top-left with purple styling
+    // Position Work IQ MCPs at the top-left with EY yellow styling
     workIQMcps.forEach((mcp, index) => {
       const savedPos = nodePositions[mcp.id]
       nodes.push({
@@ -808,7 +808,7 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
         >
           {/* MCP Column Label */}
           <div className="absolute left-24 top-8 text-sm font-medium text-muted-foreground flex items-center gap-2">
-            <div className="h-3 w-3 rounded bg-violet-500" />
+            <div className="h-3 w-3 rounded bg-[#FFE600]" />
             Integrations (MCPs)
           </div>
 
@@ -832,10 +832,10 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
                 key={node.id}
                 className={cn(
                   "absolute w-[220px] rounded-xl border bg-card shadow-sm transition-all duration-200",
-                  node.type === "workiq" && "bg-gradient-to-br from-violet-500/10 to-background border-violet-500/30",
+                  node.type === "workiq" && "bg-gradient-to-br from-[#FFE600]/10 to-background border-[#FFE600]/30",
                   isSelected
                     ? "border-accent ring-2 ring-accent/20 shadow-lg shadow-accent/10"
-                    : node.type === "workiq" ? "border-violet-500/30" : "border-border",
+                    : node.type === "workiq" ? "border-[#FFE600]/30" : "border-border",
                   isHovered && !isSelected && "border-accent/50 shadow-md",
                   isDragging && "shadow-xl scale-105 z-50",
                   isValidDropTarget && "ring-2 ring-accent ring-offset-2 ring-offset-background border-accent"
@@ -927,7 +927,7 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
                         className={cn(
                           "h-3 w-3 rounded-full",
                           node.type === "workiq"
-                            ? "bg-violet-500"
+                            ? "bg-[#FFE600]"
                             : node.type === "mcp"
                               ? getCategoryColor((node.data as MCP).category)
                               : getStatusColor(node.status || "inactive")
@@ -1226,8 +1226,8 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
             <div className="bg-secondary/30 rounded-lg p-4 mb-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-violet-500/20 flex items-center justify-center">
-                    <div className="h-3 w-3 rounded bg-violet-500" />
+                  <div className="h-8 w-8 rounded-lg bg-[#FFE600]/20 flex items-center justify-center">
+                    <div className="h-3 w-3 rounded bg-[#FFE600]" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">

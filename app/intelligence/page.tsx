@@ -26,7 +26,7 @@ const iqFamilyTabs = [
 
 const layerConfig = {
   data: { icon: Layers, label: 'Data Signals', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-  memory: { icon: MemoryStick, label: 'Organizational Memory', color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20' },
+  memory: { icon: MemoryStick, label: 'Organizational Memory', color: 'text-[#FFE600]', bg: 'bg-[#FFE600]/10', border: 'border-[#FFE600]/20' },
   inference: { icon: Cpu, label: 'Inference Activity', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
 } as const
 
@@ -67,7 +67,7 @@ export default function IntelligencePage() {
               className={cn(
                 "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all",
                 selectedFamily === tab.id
-                  ? "bg-gradient-to-r from-accent/20 to-violet-500/20 text-accent border border-accent/30"
+                  ? "bg-gradient-to-r from-accent/20 to-accent/10 text-accent border border-accent/30"
                   : tab.active
                     ? "text-muted-foreground hover:bg-secondary"
                     : "text-muted-foreground/50 cursor-not-allowed"
@@ -158,7 +158,7 @@ export default function IntelligencePage() {
                   <p className="text-xs text-foreground/80 leading-relaxed">{signal.content}</p>
                   <div className="mt-2 flex items-center gap-2">
                     <div className="h-1 flex-1 rounded-full bg-border overflow-hidden">
-                      <div className="h-full rounded-full bg-violet-400" style={{ width: `${signal.confidence * 100}%` }} />
+                      <div className="h-full rounded-full bg-[#FFE600]" style={{ width: `${signal.confidence * 100}%` }} />
                     </div>
                     <span className="text-[10px] text-muted-foreground">{Math.round(signal.confidence * 100)}%</span>
                   </div>

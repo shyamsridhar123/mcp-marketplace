@@ -43,14 +43,14 @@ const ruleTypeColors: Record<string, string> = {
   "data-access": "bg-blue-500/20 text-blue-400",
   "rate-limit": "bg-amber-500/20 text-amber-400",
   authentication: "bg-emerald-500/20 text-emerald-400",
-  compliance: "bg-violet-500/20 text-violet-400",
+  compliance: "bg-[#47C2E1]/20 text-[#47C2E1]",
 }
 
 const dlpRuleColors: Record<string, string> = {
   'connector-restriction': 'bg-rose-500/20 text-rose-400',
   'data-boundary': 'bg-cyan-500/20 text-cyan-400',
   'channel-block': 'bg-amber-500/20 text-amber-400',
-  'sensitivity-label': 'bg-violet-500/20 text-violet-400',
+  'sensitivity-label': 'bg-[#47C2E1]/20 text-[#47C2E1]',
 }
 
 const statusColors: Record<string, string> = {
@@ -519,7 +519,7 @@ export default function GovernancePage() {
                         )} style={{ width: `${score}%` }} />
                       </div>
                       <div className="mt-3 flex items-center gap-2 text-[10px] text-muted-foreground">
-                        {agent.observabilityEnabled && <span className="bg-violet-500/10 text-violet-400 px-1.5 py-0.5 rounded">OTel ✓</span>}
+                        {agent.observabilityEnabled && <span className="bg-[#FFE600]/10 text-[#FFE600] px-1.5 py-0.5 rounded">OTel ✓</span>}
                         {agent.entraIdentity && <span className="bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">Entra ✓</span>}
                         {agent.blueprintId && <span className="bg-accent/10 text-accent px-1.5 py-0.5 rounded">Blueprint ✓</span>}
                       </div>

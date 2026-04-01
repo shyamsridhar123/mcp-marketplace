@@ -191,7 +191,7 @@ export default function AnalyticsPage() {
 
               <div className="mt-6 grid grid-cols-2 gap-4">
                 {[
-                  { category: "Logging", count: 4, color: "bg-violet-500" },
+                  { category: "Logging", count: 4, color: "bg-[#FFE600]" },
                   { category: "Database", count: 3, color: "bg-orange-500" },
                   { category: "DevTools", count: 2, color: "bg-emerald-500" },
                   { category: "Analytics", count: 2, color: "bg-amber-500" },

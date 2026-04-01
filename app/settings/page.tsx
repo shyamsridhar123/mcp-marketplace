@@ -50,7 +50,7 @@ export default function SettingsPage() {
 
               <div className="mt-6 space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600 text-xl font-semibold text-white">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#FFE600] text-xl font-semibold text-[#1A1A24]">
                     AH
                   </div>
                   <div>

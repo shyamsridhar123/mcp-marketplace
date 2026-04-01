@@ -126,9 +126,9 @@ export default function MarketplacePage() {
 
           {/* Work IQ Featured Section */}
           <section className="mb-8">
-            <div className="rounded-xl border border-accent/30 bg-gradient-to-r from-accent/10 via-violet-500/5 to-background p-6">
+            <div className="rounded-xl border border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-background p-6">
               <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-violet-600">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FFE600]">
                   <span className="text-xs font-bold text-white">IQ</span>
                 </div>
                 <div>
@@ -351,7 +351,7 @@ export default function MarketplacePage() {
                             <div
                               className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
                                 server.category === "Monitoring"
-                                  ? "bg-violet-500/20"
+                                  ? "bg-[#FFE600]/20"
                                   : server.category === "Database"
                                     ? "bg-orange-500/20"
                                     : server.category === "Development"
@@ -366,7 +366,7 @@ export default function MarketplacePage() {
                               <div
                                 className={`h-4 w-4 rounded ${
                                   server.category === "Monitoring"
-                                    ? "bg-violet-500"
+                                    ? "bg-[#FFE600]"
                                     : server.category === "Database"
                                       ? "bg-orange-500"
                                       : server.category === "Development"
