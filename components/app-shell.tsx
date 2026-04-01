@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { HubAssistantLauncher } from "@/components/hub-assistant-launcher"
 import {
   Bell,
   LayoutDashboard,
@@ -211,9 +212,10 @@ export function AppShell({ children }: AppShellProps) {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="h-8 w-8"><Search className="h-4 w-4" /></Button>
+            <HubAssistantLauncher />
+            <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Search platform"><Search className="h-4 w-4" /></Button>
             <div className="relative">
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setShowActivityFeed(!showActivityFeed); if (!showActivityFeed) setUnreadCount(0) }}>
+              <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Open recent activity" onClick={() => { setShowActivityFeed(!showActivityFeed); if (!showActivityFeed) setUnreadCount(0) }}>
                 <Bell className="h-4 w-4" />
                 {unreadCount > 0 && <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#FF6B6B] text-[10px] font-medium text-white">{unreadCount}</span>}
               </Button>
