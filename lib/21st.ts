@@ -4,8 +4,8 @@ export const HUB_CHAT_QUERY_PARAM = "chat"
 export const TWENTY_FIRST_AGENT_ROUTE = "/agents?chat=1"
 
 export const TWENTY_FIRST_AGENT_SAMPLE_PROMPTS = [
-  "Give me a platform overview.",
-  "Which active agents use Work IQ integrations?",
-  "Show the pending governance approvals.",
-  "What does the Sales Rep Agent connect to?",
+  "Give me the executive briefing for this week.",
+  "Where are the biggest rollout or approval bottlenecks?",
+  "What is putting EMEA pipeline health at risk?",
+  "Map the knowledge worker journey end to end.",
 ] as const

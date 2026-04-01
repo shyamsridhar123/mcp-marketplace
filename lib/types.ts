@@ -78,6 +78,8 @@ export type MCPCategory =
   | 'Communication'
   | 'CRM'
   | 'Database'
+  | 'DevTools'
+  | 'Logging'
   | 'Security'
   | 'DevOps'
   | 'AI/ML'

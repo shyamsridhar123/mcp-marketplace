@@ -350,11 +350,11 @@ export default function MarketplacePage() {
                           <div className="flex items-center gap-3 min-w-0">
                             <div
                               className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                                server.category === "Monitoring"
+                                server.category === "Logging"
                                   ? "bg-[#FFE600]/20"
                                   : server.category === "Database"
                                     ? "bg-orange-500/20"
-                                    : server.category === "Development"
+                                    : server.category === "DevTools"
                                       ? "bg-emerald-500/20"
                                       : server.category === "Infrastructure"
                                         ? "bg-blue-500/20"
@@ -365,11 +365,11 @@ export default function MarketplacePage() {
                             >
                               <div
                                 className={`h-4 w-4 rounded ${
-                                  server.category === "Monitoring"
+                                  server.category === "Logging"
                                     ? "bg-[#FFE600]"
                                     : server.category === "Database"
                                       ? "bg-orange-500"
-                                      : server.category === "Development"
+                                      : server.category === "DevTools"
                                         ? "bg-emerald-500"
                                         : server.category === "Infrastructure"
                                           ? "bg-blue-500"
@@ -391,7 +391,7 @@ export default function MarketplacePage() {
                               </div>
                             </div>
                             {(server.status === "pending" ||
-                              server.status === "inactive") && (
+                              server.status === "rejected") && (
                               <Badge
                                 variant="outline"
                                 className="ml-2 shrink-0 border-accent/30 bg-accent/10 text-accent"

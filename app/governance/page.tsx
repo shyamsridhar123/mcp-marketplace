@@ -75,7 +75,7 @@ const complianceMetrics = {
 const approvalStages = [
   { id: "pending", label: "Pending Review", count: pendingApprovals.length },
   { id: "in-review", label: "In Review", count: 0 },
-  { id: "approved", label: "Approved", count: mcpServers.filter(m => m.status === "approved").length },
+  { id: "approved", label: "Approved", count: mcpServers.filter((m) => m.isInstalled).length },
 ]
 
 export default function GovernancePage() {
