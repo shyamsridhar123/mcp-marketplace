@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Bell,
-  HelpCircle,
+  LayoutDashboard,
   Store,
   Bot,
   Sparkles,
@@ -15,7 +15,9 @@ import {
   Shield,
   Brain,
   Settings,
-  Activity,
+  ChevronLeft,
+  ChevronRight,
+  Search,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 
@@ -23,76 +25,69 @@ interface AppShellProps {
   children: ReactNode
 }
 
-// 6-pillar navigation: Marketplace → Agents → Skills → Orchestration → Governance → Intelligence
-const navGroups = [
-  {
-    id: "marketplace",
-    label: "Marketplace",
-    icon: Store,
-    description: "Discover MCPs & Work IQ",
-    items: [{ href: "/", label: "MCP Catalog", icon: Sparkles }],
-  },
-  {
-    id: "agents",
-    label: "Agents",
-    icon: Bot,
-    description: "Agent lifecycle",
-    items: [{ href: "/agents", label: "Agent Registry" }],
-  },
-  {
-    id: "skills",
-    label: "Skills",
-    icon: Sparkles,
-    description: "Capability packages",
-    items: [{ href: "/skills", label: "Skill Library" }],
-  },
-  {
-    id: "orchestration",
-    label: "Orchestration",
-    icon: Workflow,
-    description: "Visual composition",
-    items: [
-      { href: "/canvas", label: "Connection Canvas", icon: Activity },
-    ],
-  },
-  {
-    id: "governance",
-    label: "Governance",
-    icon: Shield,
-    description: "Policies & compliance",
-    items: [{ href: "/governance", label: "Policies & Compliance" }],
-  },
-  {
-    id: "intelligence",
-    label: "Intelligence",
-    icon: Brain,
-    description: "Work IQ & analytics",
-    items: [
-      { href: "/intelligence", label: "Work IQ Dashboard" },
-      { href: "/analytics", label: "Analytics" },
-    ],
-  },
+const navItems = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/" },
+  { id: "marketplace", label: "Marketplace", icon: Store, href: "/marketplace" },
+  { id: "agents", label: "Agents", icon: Bot, href: "/agents" },
+  { id: "skills", label: "Skills", icon: Sparkles, href: "/skills" },
+  { id: "orchestration", label: "Orchestration", icon: Workflow, href: "/canvas" },
+  { id: "governance", label: "Governance", icon: Shield, href: "/governance" },
+  { id: "intelligence", label: "Intelligence", icon: Brain, href: "/intelligence" },
 ]
 
-const settingsItem = { href: "/settings", label: "Settings", icon: Settings }
-
-// Activity feed with Agent 365 activities
 const recentActivity = [
-  { id: 1, type: "install", message: "Work IQ Mail MCP activated", time: "2m ago", status: "success" },
-  { id: 2, type: "agent", message: "Knowledge Worker Agent deployed", time: "15m ago", status: "success" },
-  { id: 3, type: "policy", message: "HR Onboarding Blueprint submitted for review", time: "1h ago", status: "info" },
-  { id: 4, type: "alert", message: "Compliance Sentinel detected policy violation", time: "2h ago", status: "warning" },
-  { id: 5, type: "agent", message: "DevOps Agent MCP access request pending", time: "3h ago", status: "info" },
+  { id: 1, message: "Work IQ Mail MCP activated", time: "2m ago", status: "success" },
+  { id: 2, message: "Sales Rep Agent deployed", time: "15m ago", status: "success" },
+  { id: 3, message: "HR Blueprint submitted for review", time: "1h ago", status: "info" },
+  { id: 4, message: "Compliance violation detected", time: "2h ago", status: "warning" },
 ]
+
+function getBreadcrumbs(pathname: string): Array<{ label: string; href: string }> {
+  const crumbs: Array<{ label: string; href: string }> = [
+    { label: "EY AI Agent Hub", href: "/" },
+  ]
+  const segments = pathname.split("/").filter(Boolean)
+  if (segments.length === 0) return crumbs
+
+  const segmentLabels: Record<string, string> = {
+    marketplace: "Marketplace", agents: "Agents", skills: "Skills",
+    canvas: "Orchestration", governance: "Governance", intelligence: "Intelligence",
+    analytics: "Analytics", settings: "Settings", mcp: "MCP",
+  }
+
+  let path = ""
+  for (const seg of segments) {
+    path += `/${seg}`
+    const label = segmentLabels[seg] || seg.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+    crumbs.push({ label, href: path })
+  }
+  return crumbs
+}
 
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname()
+  const [collapsed, setCollapsed] = useState(false)
   const [showActivityFeed, setShowActivityFeed] = useState(false)
   const [unreadCount, setUnreadCount] = useState(3)
 
-  // Determine active nav group for 6-pillar nav
-  const getActiveGroup = () => {
-    if (pathname === "/" || pathname.startsWith("/mcp")) return "marketplace"
+  useEffect(() => {
+    const saved = localStorage.getItem("ey-sidebar-collapsed")
+    if (saved !== null) setCollapsed(JSON.parse(saved))
+  }, [])
+
+  useEffect(() => {
+    if (pathname === "/canvas") setCollapsed(true)
+  }, [pathname])
+
+  const toggleSidebar = () => {
+    const next = !collapsed
+    setCollapsed(next)
+    localStorage.setItem("ey-sidebar-collapsed", JSON.stringify(next))
+  }
+
+  const getActiveId = () => {
+    if (pathname === "/") return "dashboard"
+    if (pathname.startsWith("/marketplace") || pathname.startsWith("/mcp")) return "marketplace"
     if (pathname.startsWith("/agents")) return "agents"
     if (pathname.startsWith("/skills")) return "skills"
     if (pathname === "/canvas") return "orchestration"
@@ -101,172 +96,134 @@ export function AppShell({ children }: AppShellProps) {
     return null
   }
 
-  const activeGroup = getActiveGroup()
+  const activeId = getActiveId()
+  const breadcrumbs = getBreadcrumbs(pathname)
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      {/* Top Brand Bar */}
-      <div className="flex h-12 items-center justify-between border-b border-border bg-background px-6">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-violet-600 transition-transform group-hover:scale-105">
-              <span className="text-xs font-bold text-white">N</span>
-            </div>
-            <span className="text-sm font-semibold text-foreground">Nexus</span>
-          </Link>
-          <div className="h-4 w-px bg-border" />
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Acme Corp</span>
-            <span className="rounded-full bg-accent/20 px-2 py-0.5 text-xs font-medium text-accent">
-              Enterprise
-            </span>
+    <div className="flex min-h-screen bg-background">
+      {/* Left Sidebar */}
+      <aside className={cn(
+        "fixed top-0 left-0 h-screen flex flex-col border-r border-border bg-sidebar z-50 transition-all duration-200",
+        collapsed ? "w-16" : "w-60"
+      )}>
+        {/* Logo */}
+        <div className={cn("flex items-center gap-3 border-b border-border px-4 h-14 shrink-0", collapsed && "justify-center px-0")}>
+          <div className="flex h-8 w-8 items-center justify-center rounded bg-[#FFE600] shrink-0">
+            <span className="text-xs font-black text-[#1A1A24]">EY</span>
           </div>
+          {!collapsed && (
+            <div className="truncate">
+              <p className="text-sm font-semibold text-foreground leading-tight">AI Agent Hub</p>
+              <p className="text-[10px] text-muted-foreground">Enterprise Platform</p>
+            </div>
+          )}
         </div>
 
-        {/* Header Actions */}
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="h-8 gap-2 text-xs bg-transparent">
-            Feedback
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <HelpCircle className="h-4 w-4" />
-          </Button>
-          <div className="relative">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8"
-              onClick={() => {
-                setShowActivityFeed(!showActivityFeed)
-                if (!showActivityFeed) setUnreadCount(0)
-              }}
-            >
-              <Bell className="h-4 w-4" />
-              {unreadCount > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">
-                  {unreadCount}
-                </span>
-              )}
-            </Button>
-            
-            {/* Activity Feed Dropdown */}
-            {showActivityFeed && (
-              <div className="absolute right-0 top-full mt-2 w-80 rounded-xl border border-border bg-card p-2 shadow-xl z-50">
-                <div className="mb-2 px-2 py-1">
-                  <h4 className="text-sm font-medium text-foreground">Recent Activity</h4>
-                </div>
-                <div className="space-y-1">
-                  {recentActivity.map((activity) => (
-                    <div
-                      key={activity.id}
-                      className="flex items-start gap-3 rounded-lg px-2 py-2 hover:bg-secondary/50 transition-colors cursor-pointer"
-                    >
-                      <div className={cn(
-                        "mt-0.5 h-2 w-2 rounded-full shrink-0",
-                        activity.status === "success" && "bg-emerald-500",
-                        activity.status === "warning" && "bg-amber-500",
-                        activity.status === "info" && "bg-blue-500"
-                      )} />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-foreground">{activity.message}</p>
-                        <p className="text-xs text-muted-foreground">{activity.time}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-2 border-t border-border pt-2">
-                  <Button variant="ghost" size="sm" className="w-full text-xs">
-                    View all activity
-                  </Button>
-                </div>
+        {/* Nav */}
+        <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
+          {navItems.map((item) => {
+            const isActive = activeId === item.id
+            const Icon = item.icon
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                title={collapsed ? item.label : undefined}
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all relative",
+                  collapsed && "justify-center px-0",
+                  isActive
+                    ? "bg-[#FFE600]/10 text-[#FFE600]"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                )}
+              >
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-[#FFE600]" />
+                )}
+                <Icon className={cn("h-[18px] w-[18px] shrink-0", collapsed && "h-5 w-5")} />
+                {!collapsed && <span className="truncate">{item.label}</span>}
+              </Link>
+            )
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div className="border-t border-border p-2 space-y-0.5 shrink-0">
+          <Link
+            href="/settings"
+            title={collapsed ? "Settings" : undefined}
+            className={cn(
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+              collapsed && "justify-center px-0",
+              pathname === "/settings" ? "bg-[#FFE600]/10 text-[#FFE600]" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+            )}
+          >
+            <Settings className="h-[18px] w-[18px] shrink-0" />
+            {!collapsed && <span>Settings</span>}
+          </Link>
+          <button
+            onClick={toggleSidebar}
+            className={cn("flex items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors w-full", collapsed && "justify-center px-0")}
+          >
+            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            {!collapsed && <span>Collapse</span>}
+          </button>
+          <div className={cn("flex items-center gap-3 px-3 py-2", collapsed && "justify-center px-0")}>
+            <div className="h-7 w-7 rounded-full bg-[#FFE600] flex items-center justify-center text-[10px] font-bold text-[#1A1A24] shrink-0">AH</div>
+            {!collapsed && (
+              <div className="truncate">
+                <p className="text-xs font-medium text-foreground">Alex Haliburton</p>
+                <p className="text-[10px] text-muted-foreground">Platform Admin</p>
               </div>
             )}
           </div>
-          <div className="h-7 w-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 ring-2 ring-background" />
         </div>
-      </div>
+      </aside>
 
-      {/* Task-Oriented Navigation */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-14 items-center justify-between px-6">
-          <nav className="flex items-center gap-1">
-            {navGroups.map((group, index) => {
-              const isActive = activeGroup === group.id
-              const GroupIcon = group.icon
-              
-              return (
-                <div key={group.id} className="flex items-center">
-                  {index > 0 && (
-                    <div className="mx-2 flex items-center text-muted-foreground/30">
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                  )}
-                  <div className="relative group">
-                    <Link
-                      href={group.items[0].href}
-                      className={cn(
-                        "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all",
-                        isActive
-                          ? "bg-accent/15 text-accent"
-                          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                      )}
-                    >
-                      <GroupIcon className="h-4 w-4" />
-                      <span>{group.label}</span>
-                      {isActive && (
-                        <span className="ml-1 h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-                      )}
-                    </Link>
-                    
-                    {/* Dropdown for sub-items */}
-                    {group.items.length > 1 && (
-                      <div className="invisible absolute left-0 top-full pt-1 opacity-0 transition-all group-hover:visible group-hover:opacity-100 z-50">
-                        <div className="rounded-lg border border-border bg-card p-1 shadow-lg min-w-[160px]">
-                          {group.items.map((item) => (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              className={cn(
-                                "block rounded-md px-3 py-2 text-sm transition-colors",
-                                pathname === item.href
-                                  ? "bg-accent/15 text-accent"
-                                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                              )}
-                            >
-                              {item.label}
-                            </Link>
-                          ))}
+      {/* Main Area */}
+      <div className={cn("flex-1 flex flex-col transition-all duration-200", collapsed ? "ml-16" : "ml-60")}>
+        {/* Top Bar */}
+        <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-background/95 backdrop-blur px-6 shrink-0">
+          <nav className="flex items-center gap-1.5 text-sm">
+            {breadcrumbs.map((crumb, i) => (
+              <div key={crumb.href} className="flex items-center gap-1.5">
+                {i > 0 && <span className="text-muted-foreground/40">/</span>}
+                {i === breadcrumbs.length - 1 ? (
+                  <span className="text-foreground font-medium">{crumb.label}</span>
+                ) : (
+                  <Link href={crumb.href} className="text-muted-foreground hover:text-foreground transition-colors">{crumb.label}</Link>
+                )}
+              </div>
+            ))}
+          </nav>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" className="h-8 w-8"><Search className="h-4 w-4" /></Button>
+            <div className="relative">
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setShowActivityFeed(!showActivityFeed); if (!showActivityFeed) setUnreadCount(0) }}>
+                <Bell className="h-4 w-4" />
+                {unreadCount > 0 && <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#FF6B6B] text-[10px] font-medium text-white">{unreadCount}</span>}
+              </Button>
+              {showActivityFeed && (
+                <div className="absolute right-0 top-full mt-2 w-80 rounded-lg border border-border bg-card p-2 shadow-xl z-50">
+                  <div className="mb-2 px-2 py-1"><h4 className="text-sm font-medium text-foreground">Recent Activity</h4></div>
+                  <div className="space-y-1">
+                    {recentActivity.map((a) => (
+                      <div key={a.id} className="flex items-start gap-3 rounded-md px-2 py-2 hover:bg-secondary/50 transition-colors cursor-pointer">
+                        <div className={cn("mt-0.5 h-2 w-2 rounded-full shrink-0", a.status === "success" && "bg-[#4CAF82]", a.status === "warning" && "bg-[#FFB547]", a.status === "info" && "bg-[#47C2E1]")} />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-foreground">{a.message}</p>
+                          <p className="text-xs text-muted-foreground">{a.time}</p>
                         </div>
                       </div>
-                    )}
+                    ))}
                   </div>
                 </div>
-              )
-            })}
-          </nav>
-
-          {/* Settings */}
-          <Link
-            href={settingsItem.href}
-            className={cn(
-              "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-              pathname === "/settings"
-                ? "bg-accent/15 text-accent"
-                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-            )}
-          >
-            <Settings className="h-4 w-4" />
-            <span className="hidden sm:inline">Settings</span>
-          </Link>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-1">
-        {children}
-      </main>
+              )}
+            </div>
+          </div>
+        </header>
+        <main className="flex-1">{children}</main>
+      </div>
     </div>
   )
 }

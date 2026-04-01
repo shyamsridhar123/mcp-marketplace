@@ -8,8 +8,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Nexus - MCP Marketplace',
-  description: 'The enterprise platform for discovering, deploying, and managing MCP servers as custom skills for AI agents',
+  title: 'EY AI Agent Hub',
+  description: 'Enterprise platform for managing MCP servers, AI agents, skills, governance, and intelligence — powered by Microsoft Agent 365',
   generator: 'v0.app',
   icons: {
     icon: [
