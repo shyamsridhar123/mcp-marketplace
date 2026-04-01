@@ -102,7 +102,7 @@ export default function AgentsPage() {
               <Button asChild variant="outline" className="gap-2">
                 <Link href={TWENTY_FIRST_AGENT_ROUTE}>
                   <Zap className="h-4 w-4 text-[#FFE600]" />
-                  Launch 21st Assistant
+                  Ask the Hub
                 </Link>
               </Button>
               <Button className="gap-2 bg-foreground text-background hover:bg-foreground/90">

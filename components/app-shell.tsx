@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import {
   Bell,
   LayoutDashboard,
-  Store,
+  Server,
   Bot,
   Sparkles,
   Workflow,
@@ -28,7 +28,7 @@ interface AppShellProps {
 
 const navItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/" },
-  { id: "marketplace", label: "Marketplace", icon: Store, href: "/marketplace" },
+  { id: "integrations", label: "Integrations", icon: Server, href: "/marketplace" },
   { id: "agents", label: "Agents", icon: Bot, href: "/agents" },
   { id: "skills", label: "Skills", icon: Sparkles, href: "/skills" },
   { id: "orchestration", label: "Orchestration", icon: Workflow, href: "/canvas" },
@@ -51,9 +51,9 @@ function getBreadcrumbs(pathname: string): Array<{ label: string; href: string }
   if (segments.length === 0) return crumbs
 
   const segmentLabels: Record<string, string> = {
-    marketplace: "Marketplace", agents: "Agents", skills: "Skills",
+    marketplace: "Integrations", agents: "Agents", skills: "Skills",
     canvas: "Orchestration", governance: "Governance", intelligence: "Intelligence",
-    analytics: "Analytics", settings: "Settings", mcp: "MCP", "21st": "21st Assistant",
+    analytics: "Analytics", settings: "Settings", mcp: "Integrations",
   }
 
   let path = ""
@@ -88,7 +88,7 @@ export function AppShell({ children }: AppShellProps) {
 
   const getActiveId = () => {
     if (pathname === "/") return "dashboard"
-    if (pathname.startsWith("/marketplace") || pathname.startsWith("/mcp")) return "marketplace"
+    if (pathname.startsWith("/marketplace") || pathname.startsWith("/mcp")) return "integrations"
     if (pathname.startsWith("/agents")) return "agents"
     if (pathname.startsWith("/skills")) return "skills"
     if (pathname === "/canvas") return "orchestration"

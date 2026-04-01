@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   Activity,
   Zap,
+  Server,
 } from "lucide-react"
 import { AppShell } from "@/components/app-shell"
 import { mcpServers, agentData } from "@/lib/data"
@@ -47,7 +48,7 @@ export default function DashboardPage() {
   ]
 
   const pillarCards = [
-    { label: "Marketplace", icon: Store, href: "/marketplace", metric: `${totalMcps} MCPs`, sub: `${mcpServers.filter(m => m.isWorkIQ).length} Work IQ • ${mcpServers.filter(m => m.category === 'CRM').length} CRM`, color: "border-[#FFE600]/20" },
+    { label: "Integrations", icon: Server, href: "/marketplace", metric: `${totalMcps} MCPs`, sub: `${mcpServers.filter(m => m.isWorkIQ).length} Work IQ • ${mcpServers.filter(m => m.category === 'CRM').length} CRM`, color: "border-[#FFE600]/20" },
     { label: "Agents", icon: Bot, href: "/agents", metric: `${totalAgents} agents`, sub: `${activeAgents} active • ${agentData.filter(a => a.status === 'training').length} training`, color: "border-[#4CAF82]/20" },
     { label: "Skills", icon: Sparkles, href: "/skills", metric: `${totalSkills} skills`, sub: `${agentData.reduce((acc, a) => acc + a.skills.filter(s => s.isActive).length, 0)} active`, color: "border-[#47C2E1]/20" },
     { label: "Orchestration", icon: Workflow, href: "/canvas", metric: `${totalMcps + totalAgents} nodes`, sub: "Visual canvas", color: "border-[#FFB547]/20" },

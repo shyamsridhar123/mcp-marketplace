@@ -94,13 +94,13 @@ export default function MarketplacePage() {
           <div className="mb-6 flex items-start justify-between">
             <div>
               <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-                Marketplace
+                Integrations
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 <GlossaryTooltip term="integration">
-                  Discover integrations
+                  Browse MCP servers
                 </GlossaryTooltip>{" "}
-                to power your AI agents
+                — the building blocks that power agent skills
               </p>
             </div>
             <div className="flex items-center gap-3">
