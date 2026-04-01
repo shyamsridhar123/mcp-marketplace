@@ -20,6 +20,7 @@ import {
   Search,
 } from "lucide-react"
 import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "motion/react"
 
 interface AppShellProps {
   children: ReactNode
@@ -52,7 +53,7 @@ function getBreadcrumbs(pathname: string): Array<{ label: string; href: string }
   const segmentLabels: Record<string, string> = {
     marketplace: "Marketplace", agents: "Agents", skills: "Skills",
     canvas: "Orchestration", governance: "Governance", intelligence: "Intelligence",
-    analytics: "Analytics", settings: "Settings", mcp: "MCP",
+    analytics: "Analytics", settings: "Settings", mcp: "MCP", "21st": "21st Assistant",
   }
 
   let path = ""
@@ -102,21 +103,30 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Left Sidebar */}
-      <aside className={cn(
-        "fixed top-0 left-0 h-screen flex flex-col border-r border-border bg-sidebar z-50 transition-all duration-200",
-        collapsed ? "w-16" : "w-60"
-      )}>
+      <motion.aside
+        animate={{ width: collapsed ? 64 : 240 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="fixed top-0 left-0 h-screen flex flex-col border-r border-border bg-sidebar z-50 overflow-hidden"
+      >
         {/* Logo */}
         <div className={cn("flex items-center gap-3 border-b border-border px-4 h-14 shrink-0", collapsed && "justify-center px-0")}>
           <div className="flex h-8 w-8 items-center justify-center rounded bg-[#FFE600] shrink-0">
             <span className="text-xs font-black text-[#1A1A24]">EY</span>
           </div>
+          <AnimatePresence>
           {!collapsed && (
-            <div className="truncate">
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.15 }}
+              className="truncate"
+            >
               <p className="text-sm font-semibold text-foreground leading-tight">AI Agent Hub</p>
               <p className="text-[10px] text-muted-foreground">Enterprise Platform</p>
-            </div>
+            </motion.div>
           )}
+          </AnimatePresence>
         </div>
 
         {/* Nav */}
@@ -178,10 +188,14 @@ export function AppShell({ children }: AppShellProps) {
             )}
           </div>
         </div>
-      </aside>
+      </motion.aside>
 
       {/* Main Area */}
-      <div className={cn("flex-1 flex flex-col transition-all duration-200", collapsed ? "ml-16" : "ml-60")}>
+      <motion.div
+        animate={{ marginLeft: collapsed ? 64 : 240 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="flex-1 flex flex-col"
+      >
         {/* Top Bar */}
         <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-background/95 backdrop-blur px-6 shrink-0">
           <nav className="flex items-center gap-1.5 text-sm">
@@ -223,7 +237,7 @@ export function AppShell({ children }: AppShellProps) {
           </div>
         </header>
         <main className="flex-1">{children}</main>
-      </div>
+      </motion.div>
     </div>
   )
 }

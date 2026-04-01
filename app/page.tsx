@@ -18,6 +18,7 @@ import {
 import { AppShell } from "@/components/app-shell"
 import { mcpServers, agentData } from "@/lib/data"
 import { approvalRequests, iqSignals, agentBlueprints } from "@/lib/data"
+import { motion } from "motion/react"
 
 export default function DashboardPage() {
   const totalMcps = mcpServers.length
@@ -67,17 +68,23 @@ export default function DashboardPage() {
 
         {/* KPI Row */}
         <div className="mb-8 grid grid-cols-5 gap-4">
-          {kpis.map((kpi) => {
+          {kpis.map((kpi, i) => {
             const Icon = kpi.icon
             return (
-              <div key={kpi.label} className="rounded-lg border border-border bg-card p-4">
+              <motion.div
+                key={kpi.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08, duration: 0.4, ease: "easeOut" }}
+                className="rounded-lg border border-border bg-card p-4"
+              >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-muted-foreground">{kpi.label}</span>
                   <Icon className="h-4 w-4 text-[#FFE600]" />
                 </div>
                 <p className="text-2xl font-semibold text-foreground">{kpi.value}</p>
                 <p className={`text-xs mt-1 ${kpi.trendColor}`}>{kpi.trend}</p>
-              </div>
+              </motion.div>
             )
           })}
         </div>
@@ -86,33 +93,44 @@ export default function DashboardPage() {
         <div className="mb-8">
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">Quick Access</h2>
           <div className="grid grid-cols-3 gap-4">
-            {pillarCards.map((card) => {
+            {pillarCards.map((card, i) => {
               const Icon = card.icon
               return (
-                <Link
+                <motion.div
                   key={card.label}
-                  href={card.href}
-                  className={`group rounded-lg border bg-card p-5 transition-all hover:border-[#FFE600]/40 hover:bg-secondary/30 ${card.color}`}
+                  initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: 0.4 + i * 0.06, duration: 0.35, ease: "easeOut" }}
+                  whileHover={{ scale: 1.02, y: -2 }}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#FFE600]/10">
-                        <Icon className="h-5 w-5 text-[#FFE600]" />
+                  <Link
+                    href={card.href}
+                    className={`group rounded-lg border bg-card p-5 block transition-colors hover:border-[#FFE600]/40 hover:bg-secondary/30 ${card.color}`}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#FFE600]/10">
+                          <Icon className="h-5 w-5 text-[#FFE600]" />
+                        </div>
+                        <h3 className="font-medium text-foreground">{card.label}</h3>
                       </div>
-                      <h3 className="font-medium text-foreground">{card.label}</h3>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  <p className="text-lg font-semibold text-foreground">{card.metric}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{card.sub}</p>
-                </Link>
+                    <p className="text-lg font-semibold text-foreground">{card.metric}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{card.sub}</p>
+                  </Link>
+                </motion.div>
               )
             })}
           </div>
         </div>
 
         {/* Activity Feed */}
-        <div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.4 }}
+        >
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">Recent Activity</h2>
           <div className="rounded-lg border border-border bg-card divide-y divide-border">
             {[
@@ -122,14 +140,20 @@ export default function DashboardPage() {
               { action: "Compliance Sentinel flagged policy violation on Lead Gen Agent", time: "2 hours ago", type: "warning" },
               { action: "Dynamics 365 Sales Core access approved for Sales team", time: "3 hours ago", type: "success" },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 px-4 py-3">
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.9 + i * 0.05, duration: 0.3 }}
+                className="flex items-center gap-3 px-4 py-3"
+              >
                 <div className={`h-2 w-2 rounded-full shrink-0 ${item.type === "success" ? "bg-[#4CAF82]" : item.type === "warning" ? "bg-[#FFB547]" : "bg-[#47C2E1]"}`} />
                 <p className="text-sm text-foreground flex-1">{item.action}</p>
                 <span className="text-xs text-muted-foreground shrink-0">{item.time}</span>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </AppShell>
   )

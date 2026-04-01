@@ -30,7 +30,9 @@ import {
 import { AppShell } from "@/components/app-shell"
 import { GlossaryTooltip } from "@/components/glossary-tooltip"
 import { agentData, agentBlueprints } from "@/lib/data"
+import { TWENTY_FIRST_AGENT_ROUTE } from "@/lib/21st"
 import { cn } from "@/lib/utils"
+import { motion } from "motion/react"
 
 const statusConfig = {
   active: {
@@ -96,10 +98,18 @@ export default function AgentsPage() {
                 with custom skills
               </p>
             </div>
-            <Button className="gap-2 bg-foreground text-background hover:bg-foreground/90">
-              <Plus className="h-4 w-4" />
-              Create Agent
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button asChild variant="outline" className="gap-2">
+                <Link href={TWENTY_FIRST_AGENT_ROUTE}>
+                  <Zap className="h-4 w-4 text-[#FFE600]" />
+                  Launch 21st Assistant
+                </Link>
+              </Button>
+              <Button className="gap-2 bg-foreground text-background hover:bg-foreground/90">
+                <Plus className="h-4 w-4" />
+                Create Agent
+              </Button>
+            </div>
           </div>
 
           {/* Divider */}
@@ -176,15 +186,21 @@ export default function AgentsPage() {
 
           {/* Agent Cards */}
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {filteredAgents.map((agent) => {
+            {filteredAgents.map((agent, agentIndex) => {
               const status = statusConfig[agent.status as keyof typeof statusConfig]
               const StatusIcon = status.icon
 
               return (
-                <Link
+                <motion.div
                   key={agent.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: agentIndex * 0.05, duration: 0.3 }}
+                  whileHover={{ y: -3 }}
+                >
+                <Link
                   href={`/agents/${agent.id}`}
-                  className="group rounded-xl border border-border bg-card p-5 transition-all hover:border-accent/50 hover:bg-secondary/30"
+                  className="group rounded-xl border border-border bg-card p-5 block transition-colors hover:border-accent/50 hover:bg-secondary/30"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -271,6 +287,7 @@ export default function AgentsPage() {
                     <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                   </div>
                 </Link>
+                </motion.div>
               )
             })}
 

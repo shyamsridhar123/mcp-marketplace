@@ -17,6 +17,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { motion } from "motion/react"
 
 const iqFamilyTabs = [
   { id: 'work-iq', label: 'Work IQ', active: true },
@@ -116,7 +117,12 @@ export default function IntelligencePage() {
         {/* Three-Panel Layout */}
         <div className="grid grid-cols-3 gap-6">
           {/* Data Layer Panel */}
-          <div className={cn("rounded-xl border p-5", layerConfig.data.border, layerConfig.data.bg)}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
+            className={cn("rounded-xl border p-5", layerConfig.data.border, layerConfig.data.bg)}
+          >
             <div className="flex items-center gap-2 mb-4">
               <Layers className={cn("h-5 w-5", layerConfig.data.color)} />
               <h3 className={cn("font-semibold", layerConfig.data.color)}>Data Signals</h3>
@@ -139,10 +145,15 @@ export default function IntelligencePage() {
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Memory Layer Panel */}
-          <div className={cn("rounded-xl border p-5", layerConfig.memory.border, layerConfig.memory.bg)}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.4 }}
+            className={cn("rounded-xl border p-5", layerConfig.memory.border, layerConfig.memory.bg)}
+          >
             <div className="flex items-center gap-2 mb-4">
               <MemoryStick className={cn("h-5 w-5", layerConfig.memory.color)} />
               <h3 className={cn("font-semibold", layerConfig.memory.color)}>Organizational Memory</h3>
@@ -165,10 +176,15 @@ export default function IntelligencePage() {
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Inference Layer Panel */}
-          <div className={cn("rounded-xl border p-5", layerConfig.inference.border, layerConfig.inference.bg)}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.4 }}
+            className={cn("rounded-xl border p-5", layerConfig.inference.border, layerConfig.inference.bg)}
+          >
             <div className="flex items-center gap-2 mb-4">
               <Cpu className={cn("h-5 w-5", layerConfig.inference.color)} />
               <h3 className={cn("font-semibold", layerConfig.inference.color)}>Inference Activity</h3>
@@ -191,7 +207,7 @@ export default function IntelligencePage() {
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Link to Detailed Analytics */}
