@@ -279,3 +279,4 @@ export function HubAssistantSurface({ active, onClose }: HubAssistantSurfaceProp
     </div>
   )
 }
+

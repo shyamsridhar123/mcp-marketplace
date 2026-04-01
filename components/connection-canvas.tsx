@@ -1297,3 +1297,4 @@ export function ConnectionCanvas({ mcps, agents }: ConnectionCanvasProps) {
     </div>
   )
 }
+

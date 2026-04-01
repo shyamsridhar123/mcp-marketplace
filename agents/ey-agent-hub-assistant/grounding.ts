@@ -167,9 +167,9 @@ const priorityInitiatives: readonly PriorityInitiative[] = [
     nextMilestone: "Clear stalled negotiation follow-ups before Friday regional forecast review",
     relatedAgentIds: ["sales-rep-agent", "sales-manager-agent", "lead-gen-agent"],
     relatedMcpIds: [
-      "d365-sales-core",
-      "d365-sales-insights",
-      "d365-copilot-sales",
+      "dataverse-mcp",
+      "dataverse-mcp",
+      "graph-api-mcp",
       "workiq-calendar-mcp",
       "workiq-mail-mcp",
     ],
@@ -193,7 +193,7 @@ const priorityInitiatives: readonly PriorityInitiative[] = [
     ],
     nextMilestone: "Move HR onboarding registration from in-review to approved with scoped SharePoint consent",
     relatedAgentIds: ["hr-onboarding-agent", "sales-rep-agent", "lead-gen-agent"],
-    relatedMcpIds: ["workiq-sharepoint-mcp", "d365-copilot-sales"],
+    relatedMcpIds: ["workiq-sharepoint-mcp", "graph-api-mcp"],
   },
   {
     id: "initiative-ops-hardening",
@@ -376,9 +376,9 @@ const experienceJourneys: readonly ExperienceJourney[] = [
     riskSignal: "Conversation intelligence or follow-up automation stalls because access approvals or adoption lag behind.",
     relatedAgentIds: ["lead-gen-agent", "sales-rep-agent", "sales-manager-agent"],
     relatedMcpIds: [
-      "d365-sales-core",
-      "d365-sales-insights",
-      "d365-copilot-sales",
+      "dataverse-mcp",
+      "dataverse-mcp",
+      "graph-api-mcp",
       "workiq-mail-mcp",
       "workiq-calendar-mcp",
     ],
@@ -420,7 +420,7 @@ const experienceJourneys: readonly ExperienceJourney[] = [
     successSignal: "Approvals become short, evidence-based decisions rather than manual archaeology.",
     riskSignal: "Good rollout work stays blocked because evidence is spread across tools and not summarized early.",
     relatedAgentIds: ["hr-onboarding-agent", "devops-agent", "lead-gen-agent"],
-    relatedMcpIds: ["workiq-teams-mcp", "workiq-sharepoint-mcp", "d365-copilot-sales"],
+    relatedMcpIds: ["workiq-teams-mcp", "workiq-sharepoint-mcp", "graph-api-mcp"],
   },
   {
     id: "onboarding",

@@ -627,3 +627,4 @@ export function AgentDetailContent({ agent }: { agent: Agent }) {
     </AppShell>
   )
 }
+

@@ -135,3 +135,4 @@ export function MCPConnectorModal({ open, onOpenChange, mcps }: MCPConnectorModa
     </Dialog>
   )
 }
+

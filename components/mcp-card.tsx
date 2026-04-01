@@ -132,3 +132,4 @@ export function MCPCard({ mcp, variant = 'default' }: MCPCardProps) {
     </Link>
   )
 }
+

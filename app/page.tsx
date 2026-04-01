@@ -139,7 +139,7 @@ export default function DashboardPage() {
               { action: "Work IQ Mail MCP activated with admin consent", time: "15 minutes ago", type: "success" },
               { action: "HR Onboarding Blueprint submitted for review", time: "1 hour ago", type: "info" },
               { action: "Compliance Sentinel flagged policy violation on Lead Gen Agent", time: "2 hours ago", type: "warning" },
-              { action: "Dynamics 365 Sales Core access approved for Sales team", time: "3 hours ago", type: "success" },
+              { action: "Dataverse & Dynamics 365 Core access approved for Sales team", time: "3 hours ago", type: "success" },
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -159,3 +159,4 @@ export default function DashboardPage() {
     </AppShell>
   )
 }
+

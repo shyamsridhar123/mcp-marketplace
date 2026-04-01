@@ -29,7 +29,7 @@ const demoConfigs = [
       "📅 Work IQ Calendar: upcoming meeting tomorrow 2PM",
       "💬 Conversation Intelligence: extracting insights...",
       "Pricing concern detected, competitor mention (Acme)",
-      "📝 Activity Logging: writing 4 touchpoints to D365...",
+      "📝 Activity Logging: writing 4 touchpoints to Dataverse...",
       "✓ All channels captured — no gaps detected",
     ],
   },
@@ -70,7 +70,7 @@ const demoConfigs = [
     testSteps: [
       "🔍 Semantic Search: finding similar past campaigns...",
       "Best match: 'Q3 Enterprise Upsell' — 34% conversion",
-      "📊 D365 Sales: loading 2,340 target contacts...",
+      "📊 Dataverse: loading 2,340 target contacts...",
       "💬 Conversation Intelligence: scoring engagement...",
       "340 high, 650 medium, 1,350 low engagement",
       "Agent decides: personalize high-engagement first...",
@@ -518,3 +518,4 @@ export default function OrchestrationPage() {
     </AppShell>
   )
 }
+
