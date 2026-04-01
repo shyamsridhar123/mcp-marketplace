@@ -36,15 +36,17 @@ const demoConfigs = [
     agentId: "sales-rep-agent",
     testScenario: "Customer follow-up after a demo call",
     testSteps: [
-      "📧 Agent checks Work IQ Mail for recent thread with Contoso Ltd...",
-      "Found 3 emails — last reply 2 days ago, sentiment: positive",
+      "� Agent calls Semantic Search across all Contoso Ltd interactions...",
+      "Found 14 touchpoints: 3 emails, 5 meetings, 6 CRM activities",
+      "📧 Agent checks Work IQ Mail for latest thread...",
+      "Last reply 2 days ago — sentiment: positive, tone: eager",
       "📅 Agent checks Work IQ Calendar for upcoming meetings...",
       "Meeting scheduled tomorrow at 2PM — 4 attendees",
       "💬 Agent runs Conversation Intelligence on email thread...",
       "Extracted: pricing concern, competitor mention (Acme), decision timeline Q1",
       "📝 Agent logs touchpoint to D365 Sales via Activity Logging...",
-      "CRM updated: 3 emails, 1 upcoming meeting, 2 action items",
-      "✓ Touchpoint capture complete — agent decides no further action needed",
+      "CRM updated: 4 new touchpoints, 2 action items flagged",
+      "✓ Agent decides: all channels captured, no gaps detected",
     ],
   },
   {
@@ -54,8 +56,10 @@ const demoConfigs = [
     agentId: "sales-manager-agent",
     testScenario: "Weekly pipeline hygiene audit",
     testSteps: [
+      "� Agent calls Semantic Search for all pipeline-related content...",
+      "Cross-referenced 47 opportunities with emails, meetings, and docs",
       "📊 Agent reads pipeline from D365 Sales...",
-      "Loaded 47 opportunities worth $4.2M total",
+      "Total pipeline: $4.2M across 47 open opportunities",
       "🔍 Agent runs Pipeline Management skill...",
       "Found: 8 deals stale >30 days, 3 with no next step",
       "📈 Agent runs Revenue Forecasting...",
@@ -63,7 +67,7 @@ const demoConfigs = [
       "Agent decides: also need contact completeness check...",
       "👤 Runs Contact Enrichment — 12 opps missing primary email",
       "📣 Posts hygiene report to Teams via Work IQ Teams...",
-      "✓ Report sent: 25 issues across 47 opportunities",
+      "✓ Report sent: 25 issues flagged, enriched by semantic context",
     ],
   },
   {
@@ -250,132 +254,180 @@ export default function OrchestrationPage() {
                   <p className="text-xs text-muted-foreground/30 mt-1">The agent graph will appear here</p>
                 </div>
               </div>
-            ) : (
-              <div className="relative p-8" style={{ minWidth: 900, minHeight: 500 }}>
-                {/* SVG connections */}
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
-                  {/* Agent → Skill connections */}
-                  {agentGraph.skills.map((skill, i) => {
-                    const agentX = 400, agentY = 220
-                    const skillX = 100, skillY = 60 + i * 90
-                    const mx = (agentX + skillX) / 2
-                    return (
-                      <path
-                        key={`a-s-${skill.id}`}
-                        d={`M ${agentX + 32} ${agentY + 40} C ${mx + 32} ${agentY + 40}, ${mx + 32} ${skillY + 24}, ${skillX + 200} ${skillY + 24}`}
-                        fill="none" stroke="#FFE600" strokeWidth="1.5" opacity="0.3"
-                        strokeDasharray="4 4"
-                      />
-                    )
-                  })}
-                  {/* Skill → MCP connections */}
-                  {agentGraph.skills.map((skill, i) => {
-                    const skillX = 100, skillY = 60 + i * 90
-                    const mcp = agentGraph.mcps.find(m => m.id === skill.mcpId)
-                    if (!mcp) return null
-                    const mcpIdx = agentGraph.mcps.indexOf(mcp)
-                    const mcpX = 700, mcpY = 60 + mcpIdx * 100
-                    return (
-                      <path
-                        key={`s-m-${skill.id}`}
-                        d={`M ${skillX + 32} ${skillY + 24} C ${skillX - 30} ${skillY + 24}, ${mcpX + 250} ${mcpY + 28}, ${mcpX + 32} ${mcpY + 28}`}
-                        fill="none" stroke="#47C2E1" strokeWidth="1.5" opacity="0.25"
-                      />
-                    )
-                  })}
-                </svg>
+            ) : (() => {
+              const SKILL_X = 40, AGENT_X = 340, MCP_X = 640
+              const skillSpacing = Math.max(80, Math.min(95, 450 / agentGraph.skills.length))
+              const mcpSpacing = Math.max(90, Math.min(110, 450 / agentGraph.mcps.length))
+              const agentY = Math.max(120, (agentGraph.skills.length * skillSpacing) / 2 - 40)
 
-                {/* Skills Column (Left) */}
-                <div className="absolute" style={{ left: 40, top: 40, zIndex: 2 }}>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1">
-                    <Sparkles className="h-3 w-3 text-[#FFE600]" /> Skills
-                  </p>
-                  <div className="space-y-3">
-                    {agentGraph.skills.map((skill, i) => (
+              return (
+                <div className="relative p-6" style={{ minWidth: 900, minHeight: Math.max(500, agentGraph.skills.length * skillSpacing + 100) }}>
+                  {/* Animated SVG connections */}
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+                    <defs>
+                      <linearGradient id="grad-yellow" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#FFE600" stopOpacity="0.5" />
+                        <stop offset="100%" stopColor="#FFE600" stopOpacity="0.1" />
+                      </linearGradient>
+                      <linearGradient id="grad-teal" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#47C2E1" stopOpacity="0.1" />
+                        <stop offset="100%" stopColor="#47C2E1" stopOpacity="0.5" />
+                      </linearGradient>
+                    </defs>
+                    {/* Skill → Agent connections (dashed, yellow) */}
+                    {agentGraph.skills.map((skill, i) => {
+                      const sy = 50 + i * skillSpacing + 28
+                      const ay = agentY + 55
+                      return (
+                        <g key={`sa-${skill.id}`}>
+                          <path
+                            d={`M ${SKILL_X + 210} ${sy} C ${SKILL_X + 270} ${sy}, ${AGENT_X - 30} ${ay}, ${AGENT_X + 20} ${ay}`}
+                            fill="none" stroke="url(#grad-yellow)" strokeWidth="2" strokeDasharray="6 4"
+                          >
+                            <animate attributeName="stroke-dashoffset" from="20" to="0" dur="2s" repeatCount="indefinite" />
+                          </path>
+                          <circle r="3" fill="#FFE600" opacity="0.7">
+                            <animateMotion dur={`${2 + i * 0.3}s`} repeatCount="indefinite"
+                              path={`M ${SKILL_X + 210} ${sy} C ${SKILL_X + 270} ${sy}, ${AGENT_X - 30} ${ay}, ${AGENT_X + 20} ${ay}`}
+                            />
+                          </circle>
+                        </g>
+                      )
+                    })}
+                    {/* Agent → MCP connections (solid, teal) */}
+                    {agentGraph.mcps.map((mcp, i) => {
+                      const ay = agentY + 55
+                      const my = 50 + i * mcpSpacing + 28
+                      return (
+                        <g key={`am-${mcp.id}`}>
+                          <path
+                            d={`M ${AGENT_X + 220} ${ay} C ${AGENT_X + 300} ${ay}, ${MCP_X - 40} ${my}, ${MCP_X + 10} ${my}`}
+                            fill="none" stroke="url(#grad-teal)" strokeWidth="2"
+                          />
+                          <circle r="3" fill="#47C2E1" opacity="0.6">
+                            <animateMotion dur={`${2.5 + i * 0.4}s`} repeatCount="indefinite"
+                              path={`M ${AGENT_X + 220} ${ay} C ${AGENT_X + 300} ${ay}, ${MCP_X - 40} ${my}, ${MCP_X + 10} ${my}`}
+                            />
+                          </circle>
+                        </g>
+                      )
+                    })}
+                  </svg>
+
+                  {/* Skills Column */}
+                  <div className="absolute" style={{ left: SKILL_X, top: 20, zIndex: 2 }}>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                      <Sparkles className="h-3 w-3 text-[#FFE600]" /> Skills <span className="text-[#FFE600] ml-1">({agentGraph.skills.length})</span>
+                    </p>
+                    <div className="space-y-2">
+                      {agentGraph.skills.map((skill, i) => (
+                        <motion.div
+                          key={skill.id}
+                          initial={{ opacity: 0, x: -30 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.07, type: "spring", stiffness: 200 }}
+                          whileHover={{ scale: 1.03, x: 4 }}
+                          className="w-[200px] rounded-lg border border-[#FFE600]/20 bg-[#FFE600]/5 p-2.5 cursor-default backdrop-blur-sm"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="h-5 w-5 rounded bg-[#FFE600]/15 flex items-center justify-center">
+                              <Sparkles className="h-3 w-3 text-[#FFE600]" />
+                            </div>
+                            <p className="text-[11px] font-medium text-foreground truncate">{skill.name}</p>
+                          </div>
+                          <p className="text-[9px] text-muted-foreground line-clamp-2">{skill.description}</p>
+                          <div className="mt-1.5 flex items-center justify-between">
+                            <div className="flex items-center gap-1">
+                              <div className={cn("h-1.5 w-1.5 rounded-full", skill.isActive ? "bg-[#4CAF82]" : "bg-[#9898A0]")} />
+                              <span className="text-[8px] text-muted-foreground">{skill.isActive ? "Active" : "Off"}</span>
+                            </div>
+                            <span className="text-[8px] text-[#47C2E1]">→ {skill.mcpName}</span>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Agent Hub (Center) */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.7 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.15, type: "spring", stiffness: 180, damping: 15 }}
+                    className="absolute"
+                    style={{ left: AGENT_X, top: agentY, zIndex: 3 }}
+                  >
+                    <div className="w-[220px] rounded-xl border-2 border-[#4CAF82]/40 bg-gradient-to-b from-[#4CAF82]/15 to-[#4CAF82]/5 p-5 text-center shadow-xl shadow-[#4CAF82]/10 backdrop-blur-sm">
                       <motion.div
-                        key={skill.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.08 }}
-                        className="w-48 rounded-md border border-[#FFE600]/20 bg-[#FFE600]/5 p-2.5"
+                        animate={{ scale: [1, 1.05, 1] }}
+                        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                        className="flex justify-center mb-3"
                       >
-                        <div className="flex items-center gap-2 mb-1">
-                          <Sparkles className="h-3.5 w-3.5 text-[#FFE600] shrink-0" />
-                          <p className="text-[11px] font-medium text-foreground truncate">{skill.name}</p>
-                        </div>
-                        <p className="text-[9px] text-muted-foreground">{skill.description}</p>
-                        <div className="mt-1.5 flex items-center gap-1">
-                          <div className={cn("h-1.5 w-1.5 rounded-full", skill.isActive ? "bg-[#4CAF82]" : "bg-[#9898A0]")} />
-                          <span className="text-[8px] text-muted-foreground">{skill.isActive ? "Active" : "Inactive"}</span>
-                          <span className="text-[8px] text-muted-foreground ml-auto">→ {skill.mcpName}</span>
+                        <div className="h-16 w-16 rounded-full bg-[#4CAF82]/20 flex items-center justify-center ring-2 ring-[#4CAF82]/30">
+                          <Bot className="h-8 w-8 text-[#4CAF82]" />
                         </div>
                       </motion.div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Agent Hub (Center) */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                  className="absolute"
-                  style={{ left: 340, top: 160, zIndex: 3 }}
-                >
-                  <div className="w-52 rounded-lg border-2 border-[#4CAF82]/40 bg-[#4CAF82]/10 p-4 text-center shadow-lg shadow-[#4CAF82]/5">
-                    <div className="flex justify-center mb-2">
-                      <div className="h-14 w-14 rounded-full bg-[#4CAF82]/20 flex items-center justify-center ring-2 ring-[#4CAF82]/30">
-                        <Bot className="h-7 w-7 text-[#4CAF82]" />
+                      <p className="text-sm font-bold text-foreground">{agentGraph.agent.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{agentGraph.agent.department}</p>
+                      <div className="mt-2 flex justify-center gap-4 text-[10px]">
+                        <span className="text-[#FFE600] font-medium">{agentGraph.skills.length} skills</span>
+                        <span className="text-[#47C2E1] font-medium">{agentGraph.mcps.length} MCPs</span>
+                      </div>
+                      <div className="mt-3 pt-2 border-t border-[#4CAF82]/20 text-[9px] text-muted-foreground">
+                        Decides <strong className="text-[#FFE600]">which</strong> skills to invoke and <strong className="text-[#FFE600]">when</strong>
                       </div>
                     </div>
-                    <p className="text-sm font-semibold text-foreground">{agentGraph.agent.name}</p>
-                    <p className="text-[10px] text-muted-foreground">{agentGraph.agent.department}</p>
-                    <div className="mt-2 flex justify-center gap-3 text-[9px]">
-                      <span className="text-[#FFE600]">{agentGraph.skills.length} skills</span>
-                      <span className="text-[#47C2E1]">{agentGraph.mcps.length} MCPs</span>
-                    </div>
-                    <div className="mt-2 pt-2 border-t border-[#4CAF82]/20 text-[9px] text-muted-foreground">
-                      Agent reasons about <strong className="text-foreground">when</strong> to use each skill
+                  </motion.div>
+
+                  {/* MCPs Column */}
+                  <div className="absolute" style={{ left: MCP_X, top: 20, zIndex: 2 }}>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                      <Server className="h-3 w-3 text-[#47C2E1]" /> MCP Tools <span className="text-[#47C2E1] ml-1">({agentGraph.mcps.length})</span>
+                    </p>
+                    <div className="space-y-2">
+                      {agentGraph.mcps.map((mcp, i) => (
+                        <motion.div
+                          key={mcp.id}
+                          initial={{ opacity: 0, x: 30 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.2 + i * 0.07, type: "spring", stiffness: 200 }}
+                          whileHover={{ scale: 1.03, x: -4 }}
+                          className="w-[200px] rounded-lg border border-[#47C2E1]/20 bg-[#47C2E1]/5 p-2.5 cursor-default backdrop-blur-sm"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="h-5 w-5 rounded bg-[#47C2E1]/15 flex items-center justify-center">
+                              <Server className="h-3 w-3 text-[#47C2E1]" />
+                            </div>
+                            <p className="text-[11px] font-medium text-foreground truncate">{mcp.name}</p>
+                          </div>
+                          <p className="text-[9px] text-muted-foreground">{mcp.shortDescription}</p>
+                          <div className="mt-1.5 flex flex-wrap gap-1">
+                            {mcp.capabilities.slice(0, 2).map(c => (
+                              <span key={c} className="text-[7px] bg-[#47C2E1]/10 text-[#47C2E1] px-1 py-0.5 rounded">{c}</span>
+                            ))}
+                          </div>
+                        </motion.div>
+                      ))}
                     </div>
                   </div>
-                </motion.div>
 
-                {/* MCPs Column (Right) */}
-                <div className="absolute" style={{ left: 660, top: 40, zIndex: 2 }}>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1">
-                    <Server className="h-3 w-3 text-[#47C2E1]" /> MCP Tools
-                  </p>
-                  <div className="space-y-3">
-                    {agentGraph.mcps.map((mcp, i) => (
-                      <motion.div
-                        key={mcp.id}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 + i * 0.08 }}
-                        className="w-48 rounded-md border border-[#47C2E1]/20 bg-[#47C2E1]/5 p-2.5"
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <Server className="h-3.5 w-3.5 text-[#47C2E1] shrink-0" />
-                          <p className="text-[11px] font-medium text-foreground truncate">{mcp.name}</p>
-                        </div>
-                        <p className="text-[9px] text-muted-foreground">{mcp.shortDescription}</p>
-                        <div className="mt-1.5 flex flex-wrap gap-1">
-                          {mcp.capabilities.slice(0, 2).map(c => (
-                            <span key={c} className="text-[8px] bg-[#47C2E1]/10 text-[#47C2E1] px-1 py-0.5 rounded">{c}</span>
-                          ))}
-                        </div>
-                      </motion.div>
-                    ))}
+                  {/* Legend */}
+                  <div className="absolute bottom-3 left-6 flex items-center gap-5 text-[9px] text-muted-foreground/60" style={{ zIndex: 5 }}>
+                    <div className="flex items-center gap-1.5">
+                      <svg width="24" height="2"><line x1="0" y1="1" x2="24" y2="1" stroke="#FFE600" strokeWidth="2" strokeDasharray="4 3" opacity="0.5" /></svg>
+                      Agent invokes skill
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <svg width="24" height="2"><line x1="0" y1="1" x2="24" y2="1" stroke="#47C2E1" strokeWidth="2" opacity="0.5" /></svg>
+                      Skill uses MCP
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <svg width="8" height="8"><circle cx="4" cy="4" r="3" fill="#FFE600" opacity="0.7" /></svg>
+                      Data flow (animated)
+                    </div>
                   </div>
                 </div>
-
-                {/* Legend */}
-                <div className="absolute bottom-4 left-8 flex items-center gap-4 text-[9px] text-muted-foreground" style={{ zIndex: 5 }}>
-                  <div className="flex items-center gap-1"><div className="w-6 h-px bg-[#FFE600] opacity-50" style={{ borderTop: "1.5px dashed #FFE600" }} /> Agent invokes skill (any order)</div>
-                  <div className="flex items-center gap-1"><div className="w-6 h-px bg-[#47C2E1] opacity-40" /> Skill uses MCP tool</div>
-                </div>
-              </div>
-            )}
+              )
+            })()}
           </div>
         </div>
 
