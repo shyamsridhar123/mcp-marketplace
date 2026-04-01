@@ -401,7 +401,7 @@ export default function OrchestrationPage() {
 
   return (
     <AppShell>
-      <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden">
+      <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden w-full">
         {/* Left Palette */}
         <div className="w-64 border-r border-border bg-card flex flex-col shrink-0">
           <div className="p-3 border-b border-border">
@@ -493,7 +493,7 @@ export default function OrchestrationPage() {
         </div>
 
         {/* Center Canvas */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           {/* Canvas Toolbar */}
           <div className="h-10 border-b border-border bg-background flex items-center justify-between px-3">
             <div className="flex items-center gap-2">
@@ -533,8 +533,8 @@ export default function OrchestrationPage() {
             onDrop={handleCanvasDrop}
             style={{ backgroundImage: "radial-gradient(circle, #3B3B47 1px, transparent 1px)", backgroundSize: "24px 24px" }}
           >
-            {/* Inner canvas with min size for scrolling */}
-            <div className="relative" style={{ minWidth: 1200, minHeight: 600 }}>
+            {/* Inner canvas — scrollable area */}
+            <div className="relative" style={{ minWidth: 1100, minHeight: 600, width: 'max-content' }}>
             {canvasItems.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
